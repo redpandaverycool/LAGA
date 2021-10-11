@@ -409,8 +409,8 @@ class GUI:
 		newWindow.geometry("300x300")
 		Label(newWindow, text ="Probenbezeichnung eingeben (exakt):").pack()
 
-		entry46 = Entry(newWindow) # Stoff46
-		entry46.pack()
+		entry47 = Entry(newWindow)
+		entry47.pack()
 
 		def extractdatafromexcelfile():
 			# Create dictionaries with concentrations
@@ -439,16 +439,16 @@ class GUI:
 			resultLabel3 = Label(newWindow, text="Bitte eine gueltige Probenbezeichnung eingeben")
 			resultLabel4 = Label(newWindow, text="Hinweis: Zusätzliche Stoffe im Pruefbericht werden nicht beruecksichtigt")
 
-			if entry46.get() in flat_list_a: # Wenn Eingabe in Liste mit gueltiger Probenbezeichnung, dann...
-				b = entry46.get()
+			if entry47.get() in flat_list_a: # Wenn Eingabe in Liste mit gueltiger Probenbezeichnung, dann...
+				b = entry47.get()
 				print(b)
 				column_values = flat_list_a.index(b) # final column index with the desired values
 				print(column_values)
 
 				Liste_Stoffnamen_TS = excel_file.iloc[startrow_names:endrow_names,0].values.tolist() # Stoffnamen Feststoffe
-				print("Liste_Stoffnamen_TS" * 5)
-				print(Liste_Stoffnamen_TS)
 				Liste_Stoffnamen_EL = excel_file.iloc[endrow_names + 1:,0].values.tolist() # Stoffnamen Eluat
+				print("Liste_Stoffnamen_EL" * 5)
+				print(Liste_Stoffnamen_EL)
 				Liste_Gehalte_TS = excel_file.iloc[startrow_names:endrow_names,column_values].values.tolist() # Gehalte (Werte) Feststoff
 				Liste_Gehalte_EL = excel_file.iloc[endrow_names + 1:,column_values].values.tolist() # Gehalte (Werte) Eluat
 
@@ -497,11 +497,9 @@ class GUI:
 											"EOX":entry10, "Kohlenwasserstoffe":entry11, "mobiler Anteil bis C22":entry12,
 											"Cyanid ges.":entry13, "Summe BTEX":entry14, "Summe LHKW":entry15,
 											"Summe PAK (EPA)":entry16, "Benzo(a)pyren":entry17, "PCB Summe 6 Kongenere":entry18,
-											"PCB7":entry19, "TOC":entry20, "Gluehverlust":entry21,
-											"Saeureneutralisationskapazitaet":entry22, "Lipophile_Stoffe":entry23,
-											"Dioxine":entry24}
-					print("Dictionary_Gehalte_TS")
-					print(Dictionary_Gehalte_TS)
+											"TOC":entry20}
+					print("Dictionary_Gehalte_EL")
+					print(Dictionary_Gehalte_EL)
 					DictStoffnamenGUI_TS_keys = DictStoffnamenGUI_TS.keys()
 					print("DictStoffnamenGUI_TS_keys")
 					print(DictStoffnamenGUI_TS_keys)
@@ -511,7 +509,13 @@ class GUI:
 						resultLabel4.pack()
 
 				for i in Dictionary_Gehalte_EL:
-					DictStoffnamenGUI_EL = {"Arsen":entry25, "Blei":entry26}
+					DictStoffnamenGUI_EL = {"Arsen":entry25, "Blei":entry26, "Cadmium":entry27, "Chrom ges.":entry28, "Kupfer":entry29,
+											"Nickel":entry30, "Quecksilber":entry31, "Zink":entry32, "Cyanid ges.":entry33, "Cyanid l. freis. (CFA)":entry34,
+											"Phenolindex":entry35, "Chlorid":entry36, "Sulfat":entry37, "pH-Wert":entry38,
+											"Leitfähigkeit":entry39, "DOC":entry40, "Fluorid":entry41, "Barium":entry42,
+											"Molybdän":entry43, "Antimon":entry44, "Selen":entry45,
+											"Säureneutralisationskapazität":entry22, "PCB Summe 7 Kongenere":entry19, "Glühverlust":entry21,
+											"Lipophile Stoffe":entry23, "Dioxine":entry24, "Ges.-Gehalt an gel. Feststoffen":entry46}
 					DictStoffnamenGUI_EL_keys = DictStoffnamenGUI_EL.keys()
 					if i in DictStoffnamenGUI_EL_keys: #DictStoffnamenGUI_EL muss als key entry haben (entry34 zb.)
 						DictStoffnamenGUI_EL[i].insert(0, Dictionary_Gehalte_EL[i])
