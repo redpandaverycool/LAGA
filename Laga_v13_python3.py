@@ -104,7 +104,7 @@ class GUI:
 
 
 		Label(master, text = "").grid(row=0, sticky=E)
-		Label(master, text = "Projektname").grid(row=1, sticky=E)
+		Label(master, text = "Probe:").grid(row=1, sticky=E)
 		Label(master, text = "").grid(row=2, sticky=E)
 
 		Label(master, text = "Bodenart").grid(row=3, sticky=E)
@@ -320,7 +320,7 @@ class GUI:
 		entry45.grid(row=27, column=3)
 		entry46.grid(row=28, column=3)
 
-		Button(master, text="Lade Excel Pruefbericht", fg="black", bg="white", padx = 2, pady = 2, command=self.loadexcel).grid(row=32, column=3, sticky=W+E)
+		Button(master, text="Lade Werte aus Prüfbericht", fg="black", bg="white", padx = 2, pady = 2, command=self.loadexcel).grid(row=32, column=3, sticky=W+E)
 		Button(master, text="Bewertung", fg="black", bg="white", padx = 2, pady = 2, command=self.Stoff).grid(row=34, column=3, sticky=W+E)
 		Button(master, text="Beenden", command=root.destroy, bg="white", padx = 2, pady = 2).grid(row=36, column=3, sticky=W+E)
 		Radiobutton(master, text="Ton", variable=var1, command=self.Bodenart, value=1).grid(row=3, column=2, sticky=W)
@@ -407,6 +407,7 @@ class GUI:
 		newWindow = Toplevel(root)
 		newWindow.title("")
 		newWindow.geometry("300x300")
+		newWindow.iconbitmap("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/icon2.ico")
 		Label(newWindow, text ="Probenbezeichnung eingeben (exakt):").pack()
 
 		entry47 = Entry(newWindow)
@@ -505,8 +506,6 @@ class GUI:
 					print(DictStoffnamenGUI_TS_keys)
 					if i in DictStoffnamenGUI_TS_keys: #DictStoffnamenGUI_TS muss als key entry haben (entry34 zb.)
 						DictStoffnamenGUI_TS[i].insert(0, Dictionary_Gehalte_TS[i]) #HIER ist dasProblem...ost str aber muss dasentry fields sein , siehe https://stackoverflow.com/questions/26256026/attributeerror-str-object-has-no-attribute-insert
-					else:
-						resultLabel4.pack()
 
 				for i in Dictionary_Gehalte_EL:
 					DictStoffnamenGUI_EL = {"Arsen":entry25, "Blei":entry26, "Cadmium":entry27, "Chrom ges.":entry28, "Kupfer":entry29,
@@ -618,19 +617,29 @@ class GUI:
 		# Kontrolle ob positive Zahl (float) eingegeben wurde, dann weiter, sonst Ausnahme (except)
 		try:
 			for i in Liste_Stoffe:
-				# Wenn < vor der Zahl eingegeben wird, wird die Zahl als float angenommen
+				if i.wert_TS == str("n.n."):
+					i.wert_TS = float(0)
+					print("---" * 50)
+					print(i.wert_TS)
+					print("---" * 50)
+
 				if i.wert_TS == str(i.wert_TS) and i.wert_TS[0:1] == "<":
-						i.wert_TS = float(i.wert_TS[1:])
-				elif i.wert_TS == str(i.wert_TS):
+					i.wert_TS = i.wert_TS.replace("," , ".")
+					i.wert_TS = float(i.wert_TS[1:])
+				elif i.wert_TS == str(i.wert_TS) and "," in i.wert_TS:
+					i.wert_TS = i.wert_TS.replace("," , ".")
 					i.wert_TS = float(i.wert_TS)
 				elif i.wert_TS == float(i.wert_TS):
 					pass
+
 				if i.wert_EL == str(i.wert_EL) and i.wert_EL[0:1] == "<":
-						i.wert_EL = float(i.wert_EL[1:])
+					i.wert_EL = i.wert_EL.replace("," , ".")
+					i.wert_EL = float(i.wert_EL[1:])
+				elif i.wert_EL == str(i.wert_EL) and "," in i.wert_EL:
+					i.wert_EL = i.wert_EL.replace("," , ".")
+					i.wert_EL = float(i.wert_EL)
 				elif i.wert_EL == float(i.wert_EL):
 					pass
-				#elif i.wert_TS == str(i.wert_TS): (scheint nicht notwendig zu sein dieses "extra" Statement)
-					#raise ValueError
 
 				# Ueberpruefen ob eine Zahl als float eingegeben wurde und nicht negativ ist, sonst "except"
 				i.wert_TS = float(i.wert_TS)
@@ -1185,7 +1194,7 @@ class GUI:
 root = Tk()
 
 #Frame title
-root.title("  Boden- und abfallrechtlichen Bewertung (Copyright: Johannes Krohn)")
+root.title("  Boden- und abfallrechtliche Bewertung (Copyright: Johannes Krohn)")
 
 #Icon
 root.iconbitmap("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/icon2.ico")
