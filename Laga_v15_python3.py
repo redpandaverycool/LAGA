@@ -3,7 +3,7 @@
 # Cyanide richtig? (Cyanide gesamt = Cynanid?)
 # Weitere Anmerkungen BBSchG hinzufuegen
 # Grenzwere etc. fuer gefaehrlichen Abfall hinzufuegen
-#weitermachen_zeile 1081
+# Zeile 972, weitermachen, Probe und Humus und Bodenart automatisch übernehmen
 
 from tkinter import *
 import tkinter, tkinter.constants, tkinter.filedialog, tkinter.ttk
@@ -130,7 +130,7 @@ class GUI:
         Label(master, text="PCB 7 (mg/kg TM)").grid(row=20,column=3, sticky=E)
         Label(master, text="TOC (Masse-%)").grid(row=21,column=3, sticky=E)
         Label(master, text="Gluehverlust (Masse-%)").grid(row=22,column=3, sticky=E)
-        Label(master, text="Saeureneutralisationskapazitaet (mmol/kg)").grid(row=23,column=3, sticky=E)
+        Label(master, text="Saeureneutralisationskapazitaet (mmol/kg TM)").grid(row=23,column=3, sticky=E)
         Label(master, text="Extr. lipohile Stoffe (Masse-%)").grid(row=24,column=3, sticky=E)
         Label(master, text="Dioxine / Furane (ng/kg TM)").grid(row=25,column=3, sticky=E)
 
@@ -495,8 +495,8 @@ class GUI:
         option_Feststoff_PCB7.set('mg/kg TM')
         option_Feststoff_TOC.set('Masse-% TM')
         option_Feststoff_Gluehverlust.set('Masse-% TM')
-        option_Feststoff_Saeureneutralisationskapazitaet.set('mmol/kg')
-        option_Feststoff_LipophileStoffe.set('Masse-% TM')
+        option_Feststoff_Saeureneutralisationskapazitaet.set('mmol/kg TM')
+        option_Feststoff_LipophileStoffe.set('Masse-%')
         option_Eluat_pH.set('')
         option_Eluat_Leitf.set('μS/cm')
         option_Feststoff_Dioxine.set('ng/kg TM')
@@ -532,8 +532,8 @@ class GUI:
                                   "PAK16 (EPA)": "mg/kg TM",
                                   "Benzo(a)pyren": "mg/kg TM", "PCB6": "mg/kg TM", "PCB7": "mg/kg TM", "TOC": "Masse-% TM",
                                   "Gluehverlust": "Masse-% TM",
-                                  "Saeureneutralisationskapazitaet": "mmol/kg",
-                                  "Extrahierbare Lipohile Stoffe": "Masse-% TM", "Dioxine / Furane": "ng/kg TM",
+                                  "Saeureneutralisationskapazitaet": "mmol/kg TM",
+                                  "Extrahierbare Lipohile Stoffe": "Masse-%", "Dioxine / Furane": "ng/kg TM",
                                   "pH-Wert": "", "Leitfaehigkeit": "μS/cm", "Cyanid": "μg/L",
                                   "Cyanid (leicht freisetzbar)": "μg/L", "Phenolindex": "μg/L",
                                   "Chlorid": "mg/L", "Sulfat": "mg/L", "DOC": "mg/L", "Fluorid": "mg/L",
@@ -774,9 +774,9 @@ class GUI:
                                                     command=Auswahl_Einheit_Feststoff_TOC_def)
         Options_Feststoff_Gluehverlust = tkinter.OptionMenu(master, option_Feststoff_Gluehverlust, "Masse-% TM",
                                                    command=Auswahl_Einheit_Feststoff_Gluehverlust_def)
-        Options_Feststoff_Saeuren = tkinter.OptionMenu(master, option_Feststoff_Saeureneutralisationskapazitaet, "mmol/kg",
+        Options_Feststoff_Saeuren = tkinter.OptionMenu(master, option_Feststoff_Saeureneutralisationskapazitaet, "mmol/kg TM",
                                                             command=Auswahl_Einheit_Feststoff_Saeureneutralisationskapazitaet_def)
-        Options_Feststoff_LipophileStoffe = tkinter.OptionMenu(master, option_Feststoff_LipophileStoffe, "Masse-% TM",
+        Options_Feststoff_LipophileStoffe = tkinter.OptionMenu(master, option_Feststoff_LipophileStoffe, "Masse-%",
                                                        command=Auswahl_Einheit_Feststoff_LipophileStoffe_def)
         Options_Feststoff_Dioxine = tkinter.OptionMenu(master, option_Feststoff_Dioxine, "ng/kg TM","μg/kg TM","mg/kg TM",
                                                                command=Auswahl_Einheit_Feststoff_LipophileStoffe_def)
@@ -947,6 +947,7 @@ class GUI:
         entry47.pack()
 
         def extractdatafromexcelfile():
+
             # Create dictionaries with concentrations
             ### Fuer Feststoffe
             Analysenergebnisse_index = excel_file[excel_file.iloc[:, 0] == "Analysenergebnisse"].index.values
@@ -965,11 +966,14 @@ class GUI:
             flat_list_a = [item for sublist in a for item in sublist]
             resultLabel2 = Label(newWindow, text="Eingabe erfolgreich")
             resultLabel3 = Label(newWindow, text="Bitte eine gueltige Probenbezeichnung eingeben")
-            resultLabel4 = Label(newWindow, text="Hinweis: Manche Stoffe im Pruefbericht werden nicht berücksichtigt")
-            resultsLabel5 = Label(newWindow, text="Warnung: Einheiten konnten nicht vollständig aus dem Prüfbericht übernommen werden")
 
             if entry47.get() in flat_list_a:  # Wenn Eingabe in Liste mit gueltiger Probenbezeichnung, dann...
                 b = entry47.get()
+
+                # Import Probename
+                #entry0 = tkinter.StringVar(root)
+                #entry0.set("test")
+
                 column_values = flat_list_a.index(b)  # final column index with the desired values
 
                 Liste_Stoffnamen_TS = excel_file.iloc[startrow_names:endrow_names,
@@ -1057,7 +1061,7 @@ class GUI:
 
                 # Einheiten auswählen
                     #### Hier weitermachen, robust machen -> wenn Stoff nicht da seinsollte, dann sollte es nicht crashen
-                    list_MoeglicheEinheiten = ["mg/kg TM", "μg/kg TM", "ng/kg TM", "Masse-% TM", "μS/cm",'', "μg/L", "mg/L", "mmol/kg"]
+                    list_MoeglicheEinheiten = ["mg/kg TM", "µg/kg TM", "ng/kg TM", "Masse-% TM", "Masse-%", "µS/cm",'', "µg/L", "mg/L", "mmol/kg TM"]
                     list_MoeglicheEinheiten_Stoffe = ["Arsen", "Blei", "Cadmium",'EOX','Kohlenwasserstoffe','mobiler Anteil bis C22','Cyanid ges.','Summe BTEX'
                                                           ,'Summe LHKW','Summe PAK (EPA)','Benzo(a)pyren','PCB Summe 6 Kongenere'
                                                           ,'Chrom ges.','Kupfer','Nickel','Quecksilber','Thallium','Zink','TOC']
@@ -1074,97 +1078,401 @@ class GUI:
                     if "Blei" in Dictionary_Einheiten_TS:
                         if Dictionary_Einheiten_TS["Blei"] in list_MoeglicheEinheiten:
                             option_Feststoff_Blei.set(Dictionary_Einheiten_TS["Blei"])
+                            Options_Feststoff_Blei.config(fg = "GREEN")
                         else:
                             Options_Feststoff_Blei.config(fg = "RED")
                     else:
                         Options_Feststoff_Blei.config(fg = "RED")
                     ############ ab hier weiter wie oben
                     if "Cadmium" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Cadmium.set(Dictionary_Einheiten_TS["Cadmium"])
+                        if Dictionary_Einheiten_TS["Cadmium"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Cadmium.set(Dictionary_Einheiten_TS["Cadmium"])
+                            Options_Feststoff_Cadmium.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Cadmium.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Cadmium.config(fg = "RED")
+
                     if "EOX" in Dictionary_Einheiten_TS:
-                        option_Feststoff_EOX.set(Dictionary_Einheiten_TS["EOX"])
+                        if Dictionary_Einheiten_TS["EOX"] in list_MoeglicheEinheiten:
+                            option_Feststoff_EOX.set(Dictionary_Einheiten_TS["EOX"])
+                            Options_Feststoff_EOX.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_EOX.config(fg = "RED")
+                    else:
+                        Options_Feststoff_EOX.config(fg = "RED")
+
                     if "Kohlenwasserstoffe" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Kohlenwasserstoffe_C10C40.set(Dictionary_Einheiten_TS["Kohlenwasserstoffe"])
+                        if Dictionary_Einheiten_TS["Kohlenwasserstoffe"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Kohlenwasserstoffe_C10C40.set(Dictionary_Einheiten_TS["Kohlenwasserstoffe"])
+                            Options_Feststoff_KWC1040.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_KWC1040.config(fg = "RED")
+                    else:
+                        Options_Feststoff_KWC1040.config(fg = "RED")
+
                     if "mobiler Anteil bis C22" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Kohlenwasserstoffe_C10C22.set(Dictionary_Einheiten_TS["mobiler Anteil bis C22"])
+                        if Dictionary_Einheiten_TS["mobiler Anteil bis C22"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Kohlenwasserstoffe_C10C22.set(Dictionary_Einheiten_TS["mobiler Anteil bis C22"])
+                            Options_Feststoff_KWC1022.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_KWC1022.config(fg = "RED")
+                    else:
+                        Options_Feststoff_KWC1022.config(fg = "RED")
+
                     if "Cyanid ges." in Dictionary_Einheiten_TS:
-                        option_Feststoff_Cyanidegesamt.set(Dictionary_Einheiten_TS["Cyanid ges."])
+                        if Dictionary_Einheiten_TS["Cyanid ges."] in list_MoeglicheEinheiten:
+                            option_Feststoff_Cyanidegesamt.set(Dictionary_Einheiten_TS["Cyanid ges."])
+                            Options_Feststoff_Cyanidgesamt.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Cyanidgesamt.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Cyanidgesamt.config(fg = "RED")
+
                     if "Summe BTEX" in Dictionary_Einheiten_TS:
-                        option_Feststoff_BTX.set(Dictionary_Einheiten_TS["Summe BTEX"])
+                        if Dictionary_Einheiten_TS["Summe BTEX"] in list_MoeglicheEinheiten:
+                            option_Feststoff_BTX.set(Dictionary_Einheiten_TS["Summe BTEX"])
+                            Options_Feststoff_BTX.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_BTX.config(fg = "RED")
+                    else:
+                        Options_Feststoff_BTX.config(fg = "RED")
+
                     if "Summe LHKW" in Dictionary_Einheiten_TS:
-                        option_Feststoff_LHKW.set(Dictionary_Einheiten_TS["Summe LHKW"])
+                        if Dictionary_Einheiten_TS["Summe LHKW"] in list_MoeglicheEinheiten:
+                            option_Feststoff_LHKW.set(Dictionary_Einheiten_TS["Summe LHKW"])
+                            Options_Feststoff_LHKW.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_LHKW.config(fg = "RED")
+                    else:
+                        Options_Feststoff_LHKW.config(fg = "RED")
+
                     if "Summe PAK (EPA)" in Dictionary_Einheiten_TS:
-                        option_Feststoff_PAK16.set(Dictionary_Einheiten_TS["Summe PAK (EPA)"])
+                        if Dictionary_Einheiten_TS["Summe PAK (EPA)"] in list_MoeglicheEinheiten:
+                            option_Feststoff_PAK16.set(Dictionary_Einheiten_TS["Summe PAK (EPA)"])
+                            Options_Feststoff_PAK16.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_PAK16.config(fg = "RED")
+                    else:
+                        Options_Feststoff_PAK16.config(fg = "RED")
+
                     if "Benzo(a)pyren" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Benzoapyren.set(Dictionary_Einheiten_TS["Benzo(a)pyren"])
+                        if Dictionary_Einheiten_TS["Benzo(a)pyren"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Benzoapyren.set(Dictionary_Einheiten_TS["Benzo(a)pyren"])
+                            Options_Feststoff_Benzoapyren.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Benzoapyren.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Benzoapyren.config(fg = "RED")
+
                     if "PCB Summe 6 Kongenere" in Dictionary_Einheiten_TS:
-                        option_Feststoff_PCB6.set(Dictionary_Einheiten_TS["PCB Summe 6 Kongenere"])
+                        if Dictionary_Einheiten_TS["PCB Summe 6 Kongenere"] in list_MoeglicheEinheiten:
+                            option_Feststoff_PCB6.set(Dictionary_Einheiten_TS["PCB Summe 6 Kongenere"])
+                            Options_Feststoff_PCB6.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_PCB6.config(fg = "RED")
+                    else:
+                        Options_Feststoff_PCB6.config(fg = "RED")
+
                     if "Chrom ges." in Dictionary_Einheiten_TS:
-                        option_Feststoff_Chromgesamt.set(Dictionary_Einheiten_TS["Chrom ges."])
+                        if Dictionary_Einheiten_TS["Chrom ges."] in list_MoeglicheEinheiten:
+                            option_Feststoff_Chromgesamt.set(Dictionary_Einheiten_TS["Chrom ges."])
+                            Options_Feststoff_Chromgesamt.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Chromgesamt.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Chromgesamt.config(fg = "RED")
+
                     if "Kupfer" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Kupfer.set(Dictionary_Einheiten_TS["Kupfer"])
+                        if Dictionary_Einheiten_TS["Kupfer"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Kupfer.set(Dictionary_Einheiten_TS["Kupfer"])
+                            Options_Feststoff_Kupfer.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Kupfer.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Kupfer.config(fg = "RED")
+
                     if "Nickel" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Nickel.set(Dictionary_Einheiten_TS["Nickel"])
+                        if Dictionary_Einheiten_TS["Nickel"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Nickel.set(Dictionary_Einheiten_TS["Nickel"])
+                            Options_Feststoff_Nickel.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Nickel.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Nickel.config(fg = "RED")
+
                     if "Quecksilber" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Quecksilber.set(Dictionary_Einheiten_TS["Quecksilber"])
+                        if Dictionary_Einheiten_TS["Quecksilber"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Quecksilber.set(Dictionary_Einheiten_TS["Quecksilber"])
+                            Options_Feststoff_Quecksilber.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Quecksilber.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Quecksilber.config(fg = "RED")
+
                     if "Thallium" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Thallium.set(Dictionary_Einheiten_TS["Thallium"])
+                        if Dictionary_Einheiten_TS["Thallium"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Thallium.set(Dictionary_Einheiten_TS["Thallium"])
+                            Options_Feststoff_Thallium.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Thallium.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Thallium.config(fg = "RED")
+
                     if "Zink" in Dictionary_Einheiten_TS:
-                        option_Feststoff_Zink.set(Dictionary_Einheiten_TS["Zink"])
+                        if Dictionary_Einheiten_TS["Zink"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Zink.set(Dictionary_Einheiten_TS["Zink"])
+                            Options_Feststoff_Zink.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Zink.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Zink.config(fg = "RED")
+
                     if "TOC" in Dictionary_Einheiten_TS:
-                        option_Feststoff_TOC.set(Dictionary_Einheiten_TS["TOC"])
+                        if Dictionary_Einheiten_TS["TOC"] in list_MoeglicheEinheiten:
+                            option_Feststoff_TOC.set(Dictionary_Einheiten_TS["TOC"])
+                            Options_Feststoff_TOC.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_TOC.config(fg = "RED")
+                    else:
+                        Options_Feststoff_TOC.config(fg = "RED")
+
                     if "PCB Summe 7 Kongenere" in Dictionary_Einheiten_EL:
-                        option_Feststoff_PCB7.set(Dictionary_Einheiten_EL["PCB Summe 7 Kongenere"])
+                        if Dictionary_Einheiten_EL["PCB Summe 7 Kongenere"] in list_MoeglicheEinheiten:
+                            option_Feststoff_PCB7.set(Dictionary_Einheiten_EL["PCB Summe 7 Kongenere"])
+                            Options_Feststoff_PCB7.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_PCB7.config(fg = "RED")
+                    else:
+                        Options_Feststoff_PCB7.config(fg = "RED")
+
                     if "Glühverlust" in Dictionary_Einheiten_EL:
-                        option_Feststoff_Gluehverlust.set(Dictionary_Einheiten_EL["Glühverlust"])
+                        if Dictionary_Einheiten_EL["Glühverlust"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Gluehverlust.set(Dictionary_Einheiten_EL["Glühverlust"])
+                            Options_Feststoff_Gluehverlust.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Gluehverlust.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Gluehverlust.config(fg = "RED")
+
                     if "Säureneutralisationskapazität" in Dictionary_Einheiten_EL:
-                        option_Feststoff_Saeureneutralisationskapazitaet.set(Dictionary_Einheiten_EL["Säureneutralisationskapazität"])
+                        if Dictionary_Einheiten_EL["Säureneutralisationskapazität"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Saeureneutralisationskapazitaet.set(Dictionary_Einheiten_EL["Säureneutralisationskapazität"])
+                            Options_Feststoff_Saeuren.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Saeuren.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Saeuren.config(fg = "RED")
+
+                    print("Lipohile Stoffe", Dictionary_Einheiten_EL["Leitfähigkeit"])
                     if "Lipophile Stoffe" in Dictionary_Einheiten_EL:
-                        option_Feststoff_LipophileStoffe.set(Dictionary_Einheiten_EL["Lipophile Stoffe"])
+                        if Dictionary_Einheiten_EL["Lipophile Stoffe"] in list_MoeglicheEinheiten:
+                            option_Feststoff_LipophileStoffe.set(Dictionary_Einheiten_EL["Lipophile Stoffe"])
+                            Options_Feststoff_LipophileStoffe.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_LipophileStoffe.config(fg = "RED")
+                    else:
+                        Options_Feststoff_LipophileStoffe.config(fg = "RED")
+
+                    print("Leitf", Dictionary_Einheiten_EL["Leitfähigkeit"])
+                    print(Dictionary_Einheiten_EL)
                     if "Leitfähigkeit" in Dictionary_Einheiten_EL:
-                        option_Eluat_Leitf.set(Dictionary_Einheiten_EL["Leitfähigkeit"])
+                        if Dictionary_Einheiten_EL["Leitfähigkeit"] in list_MoeglicheEinheiten:
+                            option_Eluat_Leitf.set(Dictionary_Einheiten_EL["Leitfähigkeit"])
+                            Options_Eluat_Leitfaehigkeit.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Leitfaehigkeit.config(fg = "RED")
+                    else:
+                        Options_Eluat_Leitfaehigkeit.config(fg = "RED")
+
                     if "Dioxine" in Dictionary_Einheiten_EL:
-                        option_Feststoff_Dioxine.set(Dictionary_Einheiten_EL["Dioxine"])
+                        if Dictionary_Einheiten_EL["Dioxine"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Dioxine.set(Dictionary_Einheiten_EL["Dioxine"])
+                            Options_Feststoff_Dioxine.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Dioxine.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Dioxine.config(fg = "RED")
+
                     if "Arsen" in Dictionary_Einheiten_EL:
-                        option_Eluat_Arsen.set(Dictionary_Einheiten_EL["Arsen"])
+                        if Dictionary_Einheiten_EL["Arsen"] in list_MoeglicheEinheiten:
+                            option_Eluat_Arsen.set(Dictionary_Einheiten_EL["Arsen"])
+                            Options_Eluat_Arsen.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Arsen.config(fg = "RED")
+                    else:
+                        Options_Eluat_Arsen.config(fg = "RED")
+
                     if "Blei" in Dictionary_Einheiten_EL:
-                        option_Eluat_Blei.set(Dictionary_Einheiten_EL["Blei"])
+                        if Dictionary_Einheiten_EL["Blei"] in list_MoeglicheEinheiten:
+                            option_Eluat_Blei.set(Dictionary_Einheiten_EL["Blei"])
+                            Options_Eluat_Blei.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Blei.config(fg = "RED")
+                    else:
+                        Options_Eluat_Blei.config(fg = "RED")
+
                     if "Cadmium" in Dictionary_Einheiten_EL:
-                        option_Eluat_Cadmium.set(Dictionary_Einheiten_EL["Cadmium"])
+                        if Dictionary_Einheiten_EL["Cadmium"] in list_MoeglicheEinheiten:
+                            option_Eluat_Cadmium.set(Dictionary_Einheiten_EL["Cadmium"])
+                            Options_Eluat_Cadmium.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Cadmium.config(fg = "RED")
+                    else:
+                        Options_Eluat_Cadmium.config(fg = "RED")
+
                     if "Chrom ges." in Dictionary_Einheiten_EL:
-                        option_Eluat_Chromgesamt.set(Dictionary_Einheiten_EL["Chrom ges."])
+                        if Dictionary_Einheiten_EL["Chrom ges."] in list_MoeglicheEinheiten:
+                            option_Eluat_Chromgesamt.set(Dictionary_Einheiten_EL["Chrom ges."])
+                            Options_Eluat_Chromgesamt.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Chromgesamt.config(fg = "RED")
+                    else:
+                        Options_Eluat_Chromgesamt.config(fg = "RED")
+
                     if "Kupfer" in Dictionary_Einheiten_EL:
-                        option_Eluat_Kupfer.set(Dictionary_Einheiten_EL["Kupfer"])
+                        if Dictionary_Einheiten_EL["Kupfer"] in list_MoeglicheEinheiten:
+                            option_Eluat_Kupfer.set(Dictionary_Einheiten_EL["Kupfer"])
+                            Options_Eluat_Kupfer.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Kupfer.config(fg = "RED")
+                    else:
+                        Options_Eluat_Kupfer.config(fg = "RED")
+
                     if "Nickel" in Dictionary_Einheiten_EL:
-                        option_Eluat_Nickel.set(Dictionary_Einheiten_EL["Nickel"])
+                        if Dictionary_Einheiten_EL["Nickel"] in list_MoeglicheEinheiten:
+                            option_Eluat_Nickel.set(Dictionary_Einheiten_EL["Nickel"])
+                            Options_Eluat_Nickel.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Nickel.config(fg = "RED")
+                    else:
+                        Options_Eluat_Nickel.config(fg = "RED")
+
                     if "Quecksilber" in Dictionary_Einheiten_EL:
-                        option_Eluat_Quecksilber.set(Dictionary_Einheiten_EL["Quecksilber"])
+                        if Dictionary_Einheiten_EL["Quecksilber"] in list_MoeglicheEinheiten:
+                            option_Eluat_Quecksilber.set(Dictionary_Einheiten_EL["Quecksilber"])
+                            Options_Eluat_Quecksilber.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Quecksilber.config(fg = "RED")
+                    else:
+                        Options_Eluat_Quecksilber.config(fg = "RED")
+
                     if "Zink" in Dictionary_Einheiten_EL:
-                        option_Eluat_Zink.set(Dictionary_Einheiten_EL["Zink"])
+                        if Dictionary_Einheiten_EL["Zink"] in list_MoeglicheEinheiten:
+                            option_Eluat_Zink.set(Dictionary_Einheiten_EL["Zink"])
+                            Options_Eluat_Zink.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Zink.config(fg = "RED")
+                    else:
+                        Options_Eluat_Zink.config(fg = "RED")
+
                     if "Cyanid ges." in Dictionary_Einheiten_EL:
-                        option_Eluat_Cyanid.set(Dictionary_Einheiten_EL["Cyanid ges."])
+                        if Dictionary_Einheiten_EL["Cyanid ges."] in list_MoeglicheEinheiten:
+                            option_Eluat_Cyanid.set(Dictionary_Einheiten_EL["Cyanid ges."])
+                            Options_Eluat_Cyanid.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Cyanid.config(fg = "RED")
+                    else:
+                        Options_Eluat_Cyanid.config(fg = "RED")
+
                     if "Cyanid l. freis. (CFA)" in Dictionary_Einheiten_EL:
-                        option_Eluat_Cyanidleichtf.set(Dictionary_Einheiten_EL["Cyanid l. freis. (CFA)"])
+                        if Dictionary_Einheiten_EL["Cyanid l. freis. (CFA)"] in list_MoeglicheEinheiten:
+                            option_Eluat_Cyanidleichtf.set(Dictionary_Einheiten_EL["Cyanid l. freis. (CFA)"])
+                            Options_Eluat_Cyanidleichtf.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Cyanidleichtf.config(fg = "RED")
+                    else:
+                        Options_Eluat_Cyanidleichtf.config(fg = "RED")
+
                     if "Phenolindex" in Dictionary_Einheiten_EL:
-                        option_Eluat_Phenolindex.set(Dictionary_Einheiten_EL["Phenolindex"])
+                        if Dictionary_Einheiten_EL["Phenolindex"] in list_MoeglicheEinheiten:
+                            option_Eluat_Phenolindex.set(Dictionary_Einheiten_EL["Phenolindex"])
+                            Options_Eluat_Phenolindex.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Phenolindex.config(fg = "RED")
+                    else:
+                        Options_Eluat_Phenolindex.config(fg = "RED")
+
                     if "Chlorid" in Dictionary_Einheiten_EL:
-                        option_Eluat_Chlorid.set(Dictionary_Einheiten_EL["Chlorid"])
+                        if Dictionary_Einheiten_EL["Chlorid"] in list_MoeglicheEinheiten:
+                            option_Eluat_Chlorid.set(Dictionary_Einheiten_EL["Chlorid"])
+                            Options_Eluat_Chlorid.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Chlorid.config(fg = "RED")
+                    else:
+                        Options_Eluat_Chlorid.config(fg = "RED")
+
                     if "Sulfat" in Dictionary_Einheiten_EL:
-                        option_Eluat_Sulfat.set(Dictionary_Einheiten_EL["Sulfat"])
+                        if Dictionary_Einheiten_EL["Sulfat"] in list_MoeglicheEinheiten:
+                            option_Eluat_Sulfat.set(Dictionary_Einheiten_EL["Sulfat"])
+                            Options_Eluat_Sulfat.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Sulfat.config(fg = "RED")
+                    else:
+                        Options_Eluat_Sulfat.config(fg = "RED")
+
                     if "DOC" in Dictionary_Einheiten_EL:
-                        option_Eluat_DOC.set(Dictionary_Einheiten_EL["DOC"])
+                        if Dictionary_Einheiten_EL["DOC"] in list_MoeglicheEinheiten:
+                            option_Eluat_DOC.set(Dictionary_Einheiten_EL["DOC"])
+                            Options_Eluat_DOC.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_DOC.config(fg = "RED")
+                    else:
+                        Options_Eluat_DOC.config(fg = "RED")
+
                     if "Fluorid" in Dictionary_Einheiten_EL:
-                        option_Eluat_Fluorid.set(Dictionary_Einheiten_EL["Fluorid"])
+                        if Dictionary_Einheiten_EL["Fluorid"] in list_MoeglicheEinheiten:
+                            option_Eluat_Fluorid.set(Dictionary_Einheiten_EL["Fluorid"])
+                            Options_Eluat_Fluorid.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Fluorid.config(fg = "RED")
+                    else:
+                        Options_Eluat_Fluorid.config(fg = "RED")
+
                     if "Barium" in Dictionary_Einheiten_EL:
-                        option_Eluat_Barium.set(Dictionary_Einheiten_EL["Barium"])
+                        if Dictionary_Einheiten_EL["Barium"] in list_MoeglicheEinheiten:
+                            option_Eluat_Barium.set(Dictionary_Einheiten_EL["Barium"])
+                            Options_Eluat_Barium.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Barium.config(fg = "RED")
+                    else:
+                        Options_Eluat_Barium.config(fg = "RED")
+
                     if "Molybdän" in Dictionary_Einheiten_EL:
-                        option_Eluat_Molybdaen.set(Dictionary_Einheiten_EL["Molybdän"])
+                        if Dictionary_Einheiten_EL["Molybdän"] in list_MoeglicheEinheiten:
+                            option_Eluat_Molybdaen.set(Dictionary_Einheiten_EL["Molybdän"])
+                            Options_Eluat_Molybdaen.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Molybdaen.config(fg = "RED")
+                    else:
+                        Options_Eluat_Molybdaen.config(fg = "RED")
+
                     if "Antimon" in Dictionary_Einheiten_EL:
-                        option_Eluat_Antimon.set(Dictionary_Einheiten_EL["Antimon"])
+                        if Dictionary_Einheiten_EL["Antimon"] in list_MoeglicheEinheiten:
+                            option_Eluat_Antimon.set(Dictionary_Einheiten_EL["Antimon"])
+                            Options_Eluat_Antimon.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Antimon.config(fg = "RED")
+                    else:
+                        Options_Eluat_Antimon.config(fg = "RED")
+
                     if "Selen" in Dictionary_Einheiten_EL:
-                        option_Eluat_Selen.set(Dictionary_Einheiten_EL["Selen"])
+                        if Dictionary_Einheiten_EL["Selen"] in list_MoeglicheEinheiten:
+                            option_Eluat_Selen.set(Dictionary_Einheiten_EL["Selen"])
+                            Options_Eluat_Selen.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_Selen.config(fg = "RED")
+                    else:
+                        Options_Eluat_Selen.config(fg = "RED")
+
                     if "Ges.-Gehalt an gel. Feststoffen" in Dictionary_Einheiten_EL:
-                        option_Eluat_GesGehaltGelStoffe.set(Dictionary_Einheiten_EL["Ges.-Gehalt an gel. Feststoffen"])
+                        if Dictionary_Einheiten_EL["Ges.-Gehalt an gel. Feststoffen"] in list_MoeglicheEinheiten:
+                            option_Eluat_GesGehaltGelStoffe.set(Dictionary_Einheiten_EL["Ges.-Gehalt an gel. Feststoffen"])
+                            Options_Eluat_GesGehaltGelStoffe.config(fg = "GREEN")
+                        else:
+                            Options_Eluat_GesGehaltGelStoffe.config(fg = "RED")
+                    else:
+                        Options_Eluat_GesGehaltGelStoffe.config(fg = "RED")
 
             else:
                 print("Bitte eine gültige Probenbezeichnung eingeben")
