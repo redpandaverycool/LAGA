@@ -3,6 +3,7 @@
 # Cyanide richtig? (Cyanide gesamt = Cynanid?)
 # Weitere Anmerkungen BBSchG hinzufuegen
 # Grenzwere etc. fuer gefaehrlichen Abfall hinzufuegen
+#weitermachen_zeile 1081
 
 from tkinter import *
 import tkinter, tkinter.constants, tkinter.filedialog, tkinter.ttk
@@ -684,6 +685,53 @@ class GUI:
         def Auswahl_Einheit_Eluat_GesGehaltGelStoffe_def(Auswahl_Einheit_Eluat_GesGehaltGelStoffe):
             dict_Auswahl_Einheiten["Gesamtgehalt an geloesten Feststoffen"] = Auswahl_Einheit_Eluat_GesGehaltGelStoffe
 
+        global Options_Feststoff_Arsen
+        global Options_Feststoff_Blei
+        global Options_Feststoff_Cadmium
+        global Options_Feststoff_Chromgesamt
+        global Options_Feststoff_Kupfer
+        global Options_Feststoff_Nickel
+        global Options_Feststoff_Quecksilber
+        global Options_Feststoff_Thallium
+        global Options_Feststoff_Zink
+        global Options_Feststoff_EOX
+        global Options_Feststoff_KWC1040
+        global Options_Feststoff_KWC1022
+        global Options_Feststoff_Cyanidgesamt
+        global Options_Feststoff_BTX
+        global Options_Feststoff_LHKW
+        global Options_Feststoff_PAK16
+        global Options_Feststoff_Benzoapyren
+        global Options_Feststoff_PCB6
+        global Options_Feststoff_PCB7
+        global Options_Feststoff_TOC
+        global Options_Feststoff_Gluehverlust
+        global Options_Feststoff_Saeuren
+        global Options_Feststoff_LipophileStoffe
+        global Options_Feststoff_Dioxine
+        global Options_Eluat_Arsen
+        global Options_Eluat_Blei
+        global Options_Eluat_Cadmium
+        global Options_Eluat_Chromgesamt
+        global Options_Eluat_Kupfer
+        global Options_Eluat_Nickel
+        global Options_Eluat_Quecksilber
+        global Options_Eluat_Zink
+        global Options_Eluat_Cyanid
+        global Options_Eluat_Cyanidleichtf
+        global Options_Eluat_Phenolindex
+        global Options_Eluat_Chlorid
+        global Options_Eluat_Sulfat
+        global Options_Eluat_pH
+        global Options_Eluat_Leitfaehigkeit
+        global Options_Eluat_DOC
+        global Options_Eluat_Fluorid
+        global Options_Eluat_Barium
+        global Options_Eluat_Molybdaen
+        global Options_Eluat_Antimon
+        global Options_Eluat_Selen
+        global Options_Eluat_GesGehaltGelStoffe
+
         Options_Feststoff_Arsen = tkinter.OptionMenu(master, option_Feststoff_Arsen, "mg/kg TM", "μg/kg TM",
                                                command=Auswahl_Einheit_Feststoff_Arsen_def)
         Options_Feststoff_Blei = tkinter.OptionMenu(master, option_Feststoff_Blei, "mg/kg TM", "μg/kg TM",
@@ -917,7 +965,8 @@ class GUI:
             flat_list_a = [item for sublist in a for item in sublist]
             resultLabel2 = Label(newWindow, text="Eingabe erfolgreich")
             resultLabel3 = Label(newWindow, text="Bitte eine gueltige Probenbezeichnung eingeben")
-            resultLabel4 = Label(newWindow, text="Hinweis: Nicht alle Stoffe im Pruefbericht werden berücksichtigt")
+            resultLabel4 = Label(newWindow, text="Hinweis: Manche Stoffe im Pruefbericht werden nicht berücksichtigt")
+            resultsLabel5 = Label(newWindow, text="Warnung: Einheiten konnten nicht vollständig aus dem Prüfbericht übernommen werden")
 
             if entry47.get() in flat_list_a:  # Wenn Eingabe in Liste mit gueltiger Probenbezeichnung, dann...
                 b = entry47.get()
@@ -951,8 +1000,8 @@ class GUI:
                 Liste_Gehalte_EL_clean13 = [str(elem).replace(rep13, '') for elem in Liste_Gehalte_EL_clean12]
                 Liste_Gehalte_EL_clean14 = [str(elem).replace(rep14, '') for elem in Liste_Gehalte_EL_clean13]
 
-                Liste_Einheiten_TS = excel_file.iloc[startrow_einheiten:endrow_names,
-                                     1].values.tolist()  # Einheiten Feststoff
+                Liste_Einheiten = excel_file.iloc[startrow_einheiten:, 1].values.tolist()  # Einheiten Feststoff und Eluat
+                Liste_Einheiten_TS = excel_file.iloc[startrow_einheiten:endrow_names, 1].values.tolist()  # Einheiten Feststoff
                 Liste_Einheiten_EL = excel_file.iloc[endrow_names + 1:, 1].values.tolist()  # Einheiten Eluat
 
                 Zip_Gehalte_TS = zip(Liste_Stoffnamen_TS, Liste_Gehalte_TS_clean6)
@@ -963,8 +1012,8 @@ class GUI:
                 Dictionary_Gehalte_TS = dict(Zip_Gehalte_TS)
                 Dictionary_Gehalte_EL = dict(Zip_Gehalte_EL)
                 Dictionary_Einheiten_TS = dict(Zip_Einheiten_TS)
-                print(Dictionary_Einheiten_TS)
                 Dictionary_Einheiten_EL = dict(Zip_Einheiten_EL)
+                #print("Dictionary_Einheiten_EL:",Dictionary_Einheiten_EL)
 
                 # resultLabel2 = Label(newWindow, text="Eingabe erfolgreich")
                 resultLabel2.pack()
@@ -1003,58 +1052,119 @@ class GUI:
                     if i in DictStoffnamenGUI_EL_keys:  # DictStoffnamenGUI_EL muss als key entry haben (entry34 zb.)
                         DictStoffnamenGUI_EL[i].insert(0, Dictionary_Gehalte_EL[i])
                     else:
-                        resultLabel4.pack()
+                        #resultLabel4.pack()
+                        pass
 
                 # Einheiten auswählen
                     #### Hier weitermachen, robust machen -> wenn Stoff nicht da seinsollte, dann sollte es nicht crashen
-                    option_Feststoff_Arsen.set(Dictionary_Einheiten_TS["Arsen"])
-                    option_Feststoff_Blei.set(Dictionary_Einheiten_TS["Blei"])
-                    option_Feststoff_Cadmium.set('mg/kg TM')
-                    option_Feststoff_Chromgesamt.set('mg/kg TM')
-                    option_Feststoff_Kupfer.set('mg/kg TM')
-                    option_Feststoff_Nickel.set('mg/kg TM')
-                    option_Feststoff_Quecksilber.set('mg/kg TM')
-                    option_Feststoff_Thallium.set('mg/kg TM')
-                    option_Feststoff_Zink.set('mg/kg TM')
-                    option_Feststoff_EOX.set('mg/kg TM')
-                    option_Feststoff_Kohlenwasserstoffe_C10C40.set('mg/kg TM')
-                    option_Feststoff_Kohlenwasserstoffe_C10C22.set('mg/kg TM')
-                    option_Feststoff_Cyanidegesamt.set('mg/kg TM')
-                    option_Feststoff_BTX.set('mg/kg TM')
-                    option_Feststoff_LHKW.set('mg/kg TM')
-                    option_Feststoff_PAK16.set('mg/kg TM')
-                    option_Feststoff_Benzoapyren.set('mg/kg TM')
-                    option_Feststoff_PCB6.set('mg/kg TM')
-                    option_Feststoff_PCB7.set('mg/kg TM')
-                    option_Feststoff_TOC.set('Masse-% TM')
-                    option_Feststoff_Gluehverlust.set('Masse-% TM')
-                    option_Feststoff_Saeureneutralisationskapazitaet.set('mmol/kg')
-                    option_Feststoff_LipophileStoffe.set('Masse-% TM')
-                    option_Eluat_pH.set('')
-                    option_Eluat_Leitf.set('μS/cm')
-                    option_Feststoff_Dioxine.set('ng/kg TM')
-                    option_Eluat_Arsen.set('μg/L')
-                    option_Eluat_Blei.set('μg/L')
-                    option_Eluat_Cadmium.set('μg/L')
-                    option_Eluat_Chromgesamt.set('μg/L')
-                    option_Eluat_Kupfer.set('μg/L')
-                    option_Eluat_Nickel.set('μg/L')
-                    option_Eluat_Quecksilber.set('μg/L')
-                    option_Eluat_Zink.set('μg/L')
-                    option_Eluat_Cyanid.set('μg/L')
-                    option_Eluat_Cyanidleichtf.set('μg/L')
-                    option_Eluat_Phenolindex.set('μg/L')
-                    option_Eluat_Chlorid.set('mg/L')
-                    option_Eluat_Sulfat.set('mg/L')
-                    option_Eluat_DOC.set('mg/L')
-                    option_Eluat_Fluorid.set('mg/L')
-                    option_Eluat_Barium.set('mg/L')
-                    option_Eluat_Molybdaen.set('μg/L')
-                    option_Eluat_Antimon.set('μg/L')
-                    option_Eluat_Selen.set('μg/L')
-                    option_Eluat_GesGehaltGelStoffe.set('mg/L')
+                    list_MoeglicheEinheiten = ["mg/kg TM", "μg/kg TM", "ng/kg TM", "Masse-% TM", "μS/cm",'', "μg/L", "mg/L", "mmol/kg"]
+                    list_MoeglicheEinheiten_Stoffe = ["Arsen", "Blei", "Cadmium",'EOX','Kohlenwasserstoffe','mobiler Anteil bis C22','Cyanid ges.','Summe BTEX'
+                                                          ,'Summe LHKW','Summe PAK (EPA)','Benzo(a)pyren','PCB Summe 6 Kongenere'
+                                                          ,'Chrom ges.','Kupfer','Nickel','Quecksilber','Thallium','Zink','TOC']
+                    # Prüfen ob der Stoff in dem Excel-Sheet existiert und ob die Einheiten in korrekt sind (Liste), wenn alles OK dann .set Einheiten
+                    if "Arsen" in Dictionary_Einheiten_TS:
+                        if Dictionary_Einheiten_TS["Arsen"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Arsen.set(Dictionary_Einheiten_TS["Arsen"])
+                            Options_Feststoff_Arsen.config(fg = "GREEN")
+                        else:
+                            Options_Feststoff_Arsen.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Arsen.config(fg = "RED")
 
-
+                    if "Blei" in Dictionary_Einheiten_TS:
+                        if Dictionary_Einheiten_TS["Blei"] in list_MoeglicheEinheiten:
+                            option_Feststoff_Blei.set(Dictionary_Einheiten_TS["Blei"])
+                        else:
+                            Options_Feststoff_Blei.config(fg = "RED")
+                    else:
+                        Options_Feststoff_Blei.config(fg = "RED")
+                    ############ ab hier weiter wie oben
+                    if "Cadmium" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Cadmium.set(Dictionary_Einheiten_TS["Cadmium"])
+                    if "EOX" in Dictionary_Einheiten_TS:
+                        option_Feststoff_EOX.set(Dictionary_Einheiten_TS["EOX"])
+                    if "Kohlenwasserstoffe" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Kohlenwasserstoffe_C10C40.set(Dictionary_Einheiten_TS["Kohlenwasserstoffe"])
+                    if "mobiler Anteil bis C22" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Kohlenwasserstoffe_C10C22.set(Dictionary_Einheiten_TS["mobiler Anteil bis C22"])
+                    if "Cyanid ges." in Dictionary_Einheiten_TS:
+                        option_Feststoff_Cyanidegesamt.set(Dictionary_Einheiten_TS["Cyanid ges."])
+                    if "Summe BTEX" in Dictionary_Einheiten_TS:
+                        option_Feststoff_BTX.set(Dictionary_Einheiten_TS["Summe BTEX"])
+                    if "Summe LHKW" in Dictionary_Einheiten_TS:
+                        option_Feststoff_LHKW.set(Dictionary_Einheiten_TS["Summe LHKW"])
+                    if "Summe PAK (EPA)" in Dictionary_Einheiten_TS:
+                        option_Feststoff_PAK16.set(Dictionary_Einheiten_TS["Summe PAK (EPA)"])
+                    if "Benzo(a)pyren" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Benzoapyren.set(Dictionary_Einheiten_TS["Benzo(a)pyren"])
+                    if "PCB Summe 6 Kongenere" in Dictionary_Einheiten_TS:
+                        option_Feststoff_PCB6.set(Dictionary_Einheiten_TS["PCB Summe 6 Kongenere"])
+                    if "Chrom ges." in Dictionary_Einheiten_TS:
+                        option_Feststoff_Chromgesamt.set(Dictionary_Einheiten_TS["Chrom ges."])
+                    if "Kupfer" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Kupfer.set(Dictionary_Einheiten_TS["Kupfer"])
+                    if "Nickel" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Nickel.set(Dictionary_Einheiten_TS["Nickel"])
+                    if "Quecksilber" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Quecksilber.set(Dictionary_Einheiten_TS["Quecksilber"])
+                    if "Thallium" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Thallium.set(Dictionary_Einheiten_TS["Thallium"])
+                    if "Zink" in Dictionary_Einheiten_TS:
+                        option_Feststoff_Zink.set(Dictionary_Einheiten_TS["Zink"])
+                    if "TOC" in Dictionary_Einheiten_TS:
+                        option_Feststoff_TOC.set(Dictionary_Einheiten_TS["TOC"])
+                    if "PCB Summe 7 Kongenere" in Dictionary_Einheiten_EL:
+                        option_Feststoff_PCB7.set(Dictionary_Einheiten_EL["PCB Summe 7 Kongenere"])
+                    if "Glühverlust" in Dictionary_Einheiten_EL:
+                        option_Feststoff_Gluehverlust.set(Dictionary_Einheiten_EL["Glühverlust"])
+                    if "Säureneutralisationskapazität" in Dictionary_Einheiten_EL:
+                        option_Feststoff_Saeureneutralisationskapazitaet.set(Dictionary_Einheiten_EL["Säureneutralisationskapazität"])
+                    if "Lipophile Stoffe" in Dictionary_Einheiten_EL:
+                        option_Feststoff_LipophileStoffe.set(Dictionary_Einheiten_EL["Lipophile Stoffe"])
+                    if "Leitfähigkeit" in Dictionary_Einheiten_EL:
+                        option_Eluat_Leitf.set(Dictionary_Einheiten_EL["Leitfähigkeit"])
+                    if "Dioxine" in Dictionary_Einheiten_EL:
+                        option_Feststoff_Dioxine.set(Dictionary_Einheiten_EL["Dioxine"])
+                    if "Arsen" in Dictionary_Einheiten_EL:
+                        option_Eluat_Arsen.set(Dictionary_Einheiten_EL["Arsen"])
+                    if "Blei" in Dictionary_Einheiten_EL:
+                        option_Eluat_Blei.set(Dictionary_Einheiten_EL["Blei"])
+                    if "Cadmium" in Dictionary_Einheiten_EL:
+                        option_Eluat_Cadmium.set(Dictionary_Einheiten_EL["Cadmium"])
+                    if "Chrom ges." in Dictionary_Einheiten_EL:
+                        option_Eluat_Chromgesamt.set(Dictionary_Einheiten_EL["Chrom ges."])
+                    if "Kupfer" in Dictionary_Einheiten_EL:
+                        option_Eluat_Kupfer.set(Dictionary_Einheiten_EL["Kupfer"])
+                    if "Nickel" in Dictionary_Einheiten_EL:
+                        option_Eluat_Nickel.set(Dictionary_Einheiten_EL["Nickel"])
+                    if "Quecksilber" in Dictionary_Einheiten_EL:
+                        option_Eluat_Quecksilber.set(Dictionary_Einheiten_EL["Quecksilber"])
+                    if "Zink" in Dictionary_Einheiten_EL:
+                        option_Eluat_Zink.set(Dictionary_Einheiten_EL["Zink"])
+                    if "Cyanid ges." in Dictionary_Einheiten_EL:
+                        option_Eluat_Cyanid.set(Dictionary_Einheiten_EL["Cyanid ges."])
+                    if "Cyanid l. freis. (CFA)" in Dictionary_Einheiten_EL:
+                        option_Eluat_Cyanidleichtf.set(Dictionary_Einheiten_EL["Cyanid l. freis. (CFA)"])
+                    if "Phenolindex" in Dictionary_Einheiten_EL:
+                        option_Eluat_Phenolindex.set(Dictionary_Einheiten_EL["Phenolindex"])
+                    if "Chlorid" in Dictionary_Einheiten_EL:
+                        option_Eluat_Chlorid.set(Dictionary_Einheiten_EL["Chlorid"])
+                    if "Sulfat" in Dictionary_Einheiten_EL:
+                        option_Eluat_Sulfat.set(Dictionary_Einheiten_EL["Sulfat"])
+                    if "DOC" in Dictionary_Einheiten_EL:
+                        option_Eluat_DOC.set(Dictionary_Einheiten_EL["DOC"])
+                    if "Fluorid" in Dictionary_Einheiten_EL:
+                        option_Eluat_Fluorid.set(Dictionary_Einheiten_EL["Fluorid"])
+                    if "Barium" in Dictionary_Einheiten_EL:
+                        option_Eluat_Barium.set(Dictionary_Einheiten_EL["Barium"])
+                    if "Molybdän" in Dictionary_Einheiten_EL:
+                        option_Eluat_Molybdaen.set(Dictionary_Einheiten_EL["Molybdän"])
+                    if "Antimon" in Dictionary_Einheiten_EL:
+                        option_Eluat_Antimon.set(Dictionary_Einheiten_EL["Antimon"])
+                    if "Selen" in Dictionary_Einheiten_EL:
+                        option_Eluat_Selen.set(Dictionary_Einheiten_EL["Selen"])
+                    if "Ges.-Gehalt an gel. Feststoffen" in Dictionary_Einheiten_EL:
+                        option_Eluat_GesGehaltGelStoffe.set(Dictionary_Einheiten_EL["Ges.-Gehalt an gel. Feststoffen"])
 
             else:
                 print("Bitte eine gültige Probenbezeichnung eingeben")
