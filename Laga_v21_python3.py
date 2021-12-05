@@ -10,23 +10,26 @@
 # If else code block prüfen, ob dieser korrekt klassifiziert
 
 ##### Prüfung Werte LAGA
-# LAGA EINSTUFUNG PRÜFEN!!!!!
+# FERTIG LAGA EINSTUFUNG PRÜFEN!!!!!
 # FERTIG TS Z0* -> Für Bodenart TON gelten andere Grenzwerte für Arsen, Cadmium, Thallium, siehe PDF M20_II
 # FERTIG TS Z0Stern -> Bei Überschreitung ist die Ursache zu prüfen
 # FERTIG TS Z1 EOX -> Bei Überschreitung ist die Ursache zu prüfen
 # FERTIG TS Z1 PAK16 -> Tabelle II.1.2-4: Fußnote 3) Bodenmaterial mit Zuordnungswerten > 3 mg/kg und ≤ 9 mg/kg darf nur in Gebieten mit hydrogeologisch günstigen Deckschichten eingebaut werden.
-# TS KW10-40 auch für Z0 Werte? Oder nur Z0Stern? Falls nur für Z0Stern muss das noch angepasst werden.
-# TS Z0 und Z0 Stern TOC -> Bei einem C:N-Verhältnis > 25 beträgt der Zuordnungswert 1 Masse-%
-# Eluat Z0/Z0* -> Quecksilber < 0,5, nicht wie der anderen <= -> prüfen, ob dies so im if else code steht
-# Eluat Z1 -> Quecksilber < 0,5 (s.o.), auch hier prüfen
-# Eluat pH-Wert -> Extra prüfen, ob korrekt da ein Spezialfall (Spanne)
+# FERTIG, Nein auch für Z0-Werte ....TS KW10-40 auch für Z0 Werte? Oder nur Z0Stern? Falls nur für Z0Stern muss das noch angepasst werden.
+# FERTIG TS Z0 und Z0 Stern TOC -> Bei einem C:N-Verhältnis > 25 beträgt der Zuordnungswert 1 Masse-%
+# FERTIG Eluat Z0/Z0* -> Quecksilber < 0,5, nicht wie der anderen <= -> prüfen, ob dies so im if else code steht
+# FERTIG Eluat Z1 -> Quecksilber < 0,5 (s.o.), auch hier prüfen
+# FERTIG Eluat pH-Wert -> Extra prüfen, ob korrekt da ein Spezialfall (Spanne)
 # Eluat Chlorid Z2 -> Ausnahme: Bei natürlichen Böden in Ausnahmefällen bis 300 mg/l
 # Eluat Arsen Z2 -> Ausnahme: Bei natürlichen Böden in Ausnahmefällen bis 120 mg/l
 # TOC Einheit in Masse-% oder Masse-% TM?
 
+#ggf. bei def zurücksetzen die ganzen Listen mit Anmerkungen löschen
+
 ######BBSchV
 # FERTIG Hinweis Schwermetalle: Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten: unbedenklich, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen
 
+# Anmerkungen nur zeigen, wenn auch Werte eingegeben wurden!
 # FERTIG Fussnoten
 # FERTIG Extra Button -> b) Stark schluffige Sande sind entsprechend der Bodenart Lehm/Schluff zu bewerten. (Bei Sand, stark schluffig?)
 # FERTIG c) Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff.
@@ -61,6 +64,7 @@ Z11_EL = []
 Z12_EL = []
 Z2_EL = []
 Higher_Z2_EL = []
+#Z0_Stern_EL -> Gleiche Grenzwerte wie Z0_EL
 LAGA_EL_Anmerkungen = []
 # BBSchG
 BBSchG_Eingehalten = []
@@ -1941,35 +1945,35 @@ class GUI:
                     # Für Einbauklassen Z0, Z1, Z2, >Z2
                     if i.wert_TS <= i.Limit_Z0_Sa_TS:
                         Z0_TS.extend({i.name})
-                    elif i.wert_TS > i.Limit_Z0_Sa_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z0_Sa_TS < i.wert_TS <= i.Limit_Z1_TS:
                         Z1_TS.extend({i.name})
-                    elif i.wert_TS > i.Limit_Z1_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z1_TS < i.wert_TS <= i.Limit_Z2_TS:
                         Z2_TS.extend({i.name})
                     elif i.wert_TS > i.Limit_Z2_TS and i.wert_TS != 10000000:
                         Higher_Z2_TS.extend({i.name})
                     # Für Einbauklasse Z0*
-                    if i.wert_TS > i.Limit_Z0_Stern_TS and i.wert_TS != 10000000:
+                    if i.wert_TS > i.Limit_Z0_Stern_TS and i.wert_TS != 10000000: # max. Feststoffgehalte für Abgrabungen (Z0*)
                         Z0_Stern_TS.extend({i.name})
                 elif Bodenart_auswahl == "Bodenart: Schluff":
                     # Für Einbauklassen Z0, Z1, Z2, >Z2
                     if i.wert_TS <= i.Limit_Z0_SL_TS:
                         Z0_TS.extend({i.name})
-                    elif i.wert_TS <= i.Limit_Z1_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z0_SL_TS < i.wert_TS <= i.Limit_Z1_TS:
                         Z1_TS.extend({i.name})
-                    elif i.wert_TS > i.Limit_Z1_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z1_TS < i.wert_TS <= i.Limit_Z2_TS:
                         Z2_TS.extend({i.name})
                     elif i.wert_TS > i.Limit_Z2_TS and i.wert_TS != 10000000:
                         Higher_Z2_TS.extend({i.name})
                     # Für Einbauklasse Z0*
-                    if i.wert_TS > i.Limit_Z0_Stern_TS and i.wert_TS != 10000000:
+                    if i.wert_TS > i.Limit_Z0_Stern_TS and i.wert_TS != 10000000: # max. Feststoffgehalte für Abgrabungen (Z0*)
                         Z0_Stern_TS.extend({i.name})
                 elif Bodenart_auswahl == "Bodenart: Ton":
                     # Für Einbauklassen Z0, Z1, Z2, >Z2
                     if i.wert_TS <= i.Limit_Z0_T_TS:
                         Z0_TS.extend({i.name})
-                    elif i.wert_TS > i.Limit_Z0_T_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z0_T_TS < i.wert_TS <= i.Limit_Z1_TS:
                         Z1_TS.extend({i.name})
-                    elif i.wert_TS > i.Limit_Z1_TS and i.wert_TS != 10000000:
+                    elif i.Limit_Z1_TS < i.wert_TS <= i.Limit_Z2_TS:
                         Z2_TS.extend({i.name})
                     elif i.wert_TS > i.Limit_Z2_TS and i.wert_TS != 10000000:
                         Higher_Z2_TS.extend({i.name})
@@ -1998,41 +2002,57 @@ class GUI:
                         LAGA_TS_Anmerkungen.remove("Bodenmaterial mit PAK16 Zuordnungswerten > 3 mg/kg und <= 9 mg/kg darf nur in Gebieten mit hydrogeologisch günstigen Deckschichten eingebaut werden.")
                     LAGA_TS_Anmerkungen.extend(["Bodenmaterial mit PAK16 Zuordnungswerten > 3 mg/kg und <= 9 mg/kg darf nur in Gebieten mit hydrogeologisch günstigen Deckschichten eingebaut werden."])
                     print(f"PAK-WERT IST: {i.wert_TS}")
+                # Tabelle II.1.2-2: Fußnote 6
+                if i.name == "TOC" and i.wert_TS <= i.Limit_Z0_Stern_TS: # Wert Z0* = Werte Z0 (Ton/Lehm/Sand) = 0.5
+                    if "Zusätzliche Prüfung erforderlich: Bei TOC gleich Z0 oder Z0* und einem C:N-Verhältnis > 25 beträgt der Zuordnungswert für TOC 1 Masse-%." in LAGA_TS_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        LAGA_TS_Anmerkungen.remove("Zusätzliche Prüfung erforderlich: Bei TOC gleich Z0 oder Z0* und einem C:N-Verhältnis > 25 beträgt der Zuordnungswert für TOC 1 Masse-%.")
+                    LAGA_TS_Anmerkungen.extend(["Zusätzliche Prüfung erforderlich: Bei TOC gleich Z0 oder Z0* und einem C:N-Verhältnis > 25 beträgt der Zuordnungswert für TOC 1 Masse-%."])
 
             # LAGA Eluat Einordnung
             for i in Liste_Stoffe_LAGA:
                 if i.name in Z0_EL:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
                     Z0_EL.remove(i.name)
-                else:
-                    pass
                 if i.name in Z11_EL:
                     Z11_EL.remove(i.name)
-                else:
-                    pass
                 if i.name in Z12_EL:
                     Z12_EL.remove(i.name)
-                else:
-                    pass
                 if i.name in Z2_EL:
                     Z2_EL.remove(i.name)
-                else:
-                    pass
                 if i.name in Higher_Z2_EL:
                     Higher_Z2_EL.remove(i.name)
-                else:
-                    pass
 
-                # Eluat
-                if i.wert_EL <= i.Limit_Z0_EL:
+                # Eluat (außer pH-Wert und Quecksilber, für diese gelten extra Regeln, siehe unten)
+                if i.wert_EL <= i.Limit_Z0_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
                     Z0_EL.extend({i.name})
-                elif i.wert_EL <= i.Limit_Z11_EL:
+                elif i.Limit_Z0_EL < i.wert_EL <= i.Limit_Z11_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
                         Z11_EL.extend({i.name})
-                elif i.wert_EL <= i.Limit_Z12_EL:
+                elif i.Limit_Z11_EL < i.wert_EL <= i.Limit_Z12_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
                         Z12_EL.extend({i.name})
-                elif i.wert_EL <= i.Limit_Z2_EL:
+                elif i.Limit_Z12_EL < i.wert_EL <= i.Limit_Z2_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
                         Z2_EL.extend({i.name})
-                elif i.wert_EL > i.Limit_Z2_EL and i.wert_EL != 10000000:
+                elif i.wert_EL > i.Limit_Z2_EL and i.name != "Quecksilber" and i.name != "pH-Wert" and i.wert_EL != 10000000:
                         Higher_Z2_EL.extend({i.name})
+                # Ausnahme für Quecksilber
+                if i.wert_EL < i.Limit_Z0_EL and i.name == "Quecksilber":
+                    Z0_EL.extend({i.name})
+                elif i.Limit_Z0_EL <= i.wert_EL < i.Limit_Z11_EL and i.name == "Quecksilber" :
+                    Z11_EL.extend({i.name})
+                elif i.Limit_Z11_EL <= i.wert_EL <= i.Limit_Z12_EL and i.name == "Quecksilber":
+                    Z12_EL.extend({i.name})
+                elif i.Limit_Z12_EL < i.wert_EL <= i.Limit_Z2_EL and i.name == "Quecksilber":
+                    Z2_EL.extend({i.name})
+                elif i.wert_EL > i.Limit_Z2_EL and i.wert_EL != 10000000 and i.name == "Quecksilber":
+                    Higher_Z2_EL.extend({i.name})
+
+                # Tabelle II.1.2-5: Fußnoten 2 und 3
+                if i.name == "Chlorid" and i.wert_EL > i.Limit_Z2_EL:
+                    if "Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Chlorid im Eluat in Ausnahmefällen bis 300 mg/l betragen." in LAGA_EL_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        LAGA_EL_Anmerkungen.remove("Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Chlorid im Eluat in Ausnahmefällen bis 300 mg/l betragen.")
+                    LAGA_EL_Anmerkungen.extend(["Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Chlorid im Eluat in Ausnahmefällen bis 300 mg/l betragen."])
+                if i.name == "Arsen" and i.wert_EL > i.Limit_Z2_EL:
+                    if "Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Arsen im Eluat in Ausnahmefällen bis 120 ug/l betragen." in LAGA_EL_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        LAGA_EL_Anmerkungen.remove("Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Arsen im Eluat in Ausnahmefällen bis 120 ug/l betragen.")
+                    LAGA_EL_Anmerkungen.extend(["Zusätzliche Prüfung erforderlich: Bei natürlichen Böden kann der Z2-Zuordnungswert für Arsen im Eluat in Ausnahmefällen bis 120 ug/l betragen."])
 
             # LAGA pH Wert Einordnung
             if pH_Wert.name in Z2_EL:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
@@ -2040,21 +2060,16 @@ class GUI:
             if pH_Wert.name in Z12_EL:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
                 Z12_EL.remove(i.name)
 
-            if pH_Wert.wert_EL == 10000000:
-                print("pH nicht eingegeben")
-            elif pH_Wert.wert_EL >= 6.5 and pH_Wert.wert_EL <= 9.5:
-                print("pH groesser gleich 6.5 und kleiner gleich 9.5")
-            elif 5.5 <= pH_Wert.wert_EL < 6.0:
-                print("pH groesser gleich 5.5 und kleiner 6.0")
+            if 6.5 <= pH_Wert.wert_EL <= 9.5:
+                Z0_EL.extend({pH_Wert.name})
+            # Für Z1.1 gibt es keine Einstufung (gleich wie Z0)
+            elif (6 <= pH_Wert.wert_EL < 6.5) or (9.5 < pH_Wert.wert_EL <= 12): #korrekt
+                Z12_EL.extend({pH_Wert.name})
+                #Z0*extend
+            elif 6 > pH_Wert.wert_EL >= 5.5: # korrekt
                 Z2_EL.extend({pH_Wert.name})
-            elif 6.0 <= pH_Wert.wert_EL < 6.5:
-                print("pH groesser gleich 6.0 und kleiner 6.5")
-                Z12_EL.extend({pH_Wert.name})
-            elif 9.5 < pH_Wert.wert_EL <= 12.0:
-                print("pH groesser 9.5 und kleiner gleich 12.0")
-                Z12_EL.extend({pH_Wert.name})
-            elif 5.5 > pH_Wert.wert_EL or pH_Wert.wert_EL > 12.0:
-                print("pH kleiner 5.5 oder groesser 12.0")
+            elif 5.5 > pH_Wert.wert_EL or pH_Wert.wert_EL > 12 and pH_Wert.wert_EL != 10000000:
+                Higher_Z2_EL.extend({pH_Wert.name})
 
             # BBSchG Einordnung Kohlenwasserstoffe (abhaengig vom Humusgehalt)
             for i in Liste_Stoffe_BBSchG_Kohlenwasserstoffe:
@@ -2095,9 +2110,9 @@ class GUI:
 
                     # Ausnahme Fußnote b) Stark schluffige Sande sind entsprechend der Bodenart Lehm/Schluff zu bewerten.
                     elif Bodenart_auswahl == "Bodenart: Sand" and Bodenart_auswahl_ergaenzung == "Stark schluffhaltiger Sand (40 bis <50%)": # bei stark schluffigem Sand Einstufung gemäß Grenzwerte für Schluff
-                        if "Stark schluffige Sande sind entsprechend der Bodenart Lehm/Schluff zu bewerten." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                            BBSchG_Anmerkungen.remove("Stark schluffige Sande sind entsprechend der Bodenart Lehm/Schluff zu bewerten.")
-                        BBSchG_Anmerkungen.extend(["Stark schluffige Sande sind entsprechend der Bodenart Lehm/Schluff zu bewerten."])
+                        if "Stark schluffige Sande wurden entsprechend der Bodenart Lehm/Schluff bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                            BBSchG_Anmerkungen.remove("Stark schluffige Sande wurden entsprechend der Bodenart Lehm/Schluff bewertet.")
+                        BBSchG_Anmerkungen.extend(["Stark schluffige Sande wurden entsprechend der Bodenart Lehm/Schluff bewertet."])
                         if i.wert_TS > i.Limit_BBSchG_SL and i.wert_TS != 10000000:
                             BBSchG_Ueberschritten.extend({i.name})
                             if "Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
@@ -2107,9 +2122,9 @@ class GUI:
                     # Ausnahme Fußnote c) (1) Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff
                     if Bodenart_auswahl == "Bodenart: Ton" and pH_Wert.wert_EL < 6.0 and (i.name == "Cadmium" or i.name == "Nickel" or i.name == "Zink"):
                         print(f"BBSchV Fußnote c) Bodenart Ton, pH-Wert <6.0 und Stoff: {i.name}")
-                        if "Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff.")
-                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff."])
+                        if "Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink im Feststoff anhand der Vorsorgewerte der Bodenart Lehm/Schluff bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink im Feststoff anhand der Vorsorgewerte der Bodenart Lehm/Schluff bewertet.")
+                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink im Feststoff anhand der Vorsorgewerte der Bodenart Lehm/Schluff bewertet."])
                         if i.wert_TS > i.Limit_BBSchG_SL and i.wert_TS != 10000000:
                             BBSchG_Ueberschritten.extend({i.name})
                             if "Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
@@ -2119,9 +2134,9 @@ class GUI:
                     # Ausnahme Fußnote c) (2) Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand
                     if Bodenart_auswahl == "Bodenart: Schluff" and pH_Wert.wert_EL < 6.0 and (i.name == "Cadmium" or i.name == "Nickel" or i.name == "Zink"):
                         print(f"BBSchV Fußnote c) Bodenart Lehm/Schluff, pH-Wert <6.0 und Stoff: {i.name}")
-                        if "Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand.")
-                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand."])
+                        if "Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Sand bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Sand bewertet.")
+                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Sand bewertet."])
                         if i.wert_TS > i.Limit_BBSchG_Sa and i.wert_TS != 10000000:
                             BBSchG_Ueberschritten.extend({i.name})
                             if "Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
@@ -2131,9 +2146,9 @@ class GUI:
                     # Ausnahme Fußnote c) (3) Bei Böden mit einem pH-Wert von < 5,0 sind die Vorsorgewerte für Blei entsprechend den ersten beiden Anstrichen herabzusetzen.
                     if (Bodenart_auswahl == "Bodenart: Schluff" or Bodenart_auswahl == "Bodenart: Ton") and pH_Wert.wert_EL < 5.0 and (i.name == "Blei"):
                         print(f"BBSchV Fußnote c) Bodenart Lehm/Schluff, pH-Wert <5.0 und Stoff: {i.name}")
-                        if "Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 gelten für Blei die Vorsorgewerte der Bodenart Lehm/Schluff (Sand)." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 gelten für Blei die Vorsorgewerte der Bodenart Lehm/Schluff (Sand).")
-                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 gelten für Blei die Vorsorgewerte der Bodenart Lehm/Schluff (Sand)."])
+                        if "Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 wurde für Blei anhand der Vorsorgewerte der Bodenart Lehm/Schluff (Sand) bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                            BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 wurde für Blei anhand der Vorsorgewerte der Bodenart Lehm/Schluff (Sand) bewertet.")
+                        BBSchG_Anmerkungen.extend(["Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 wurde für Blei anhand der Vorsorgewerte der Bodenart Lehm/Schluff (Sand) bewertet."])
                         if Bodenart_auswahl == "Bodenart: Schluff" and i.wert_TS > i.Limit_BBSchG_Sa and i.wert_TS != 10000000:
                             BBSchG_Ueberschritten.extend({i.name})
                             if "Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
@@ -2163,12 +2178,12 @@ class GUI:
                     print(f" Humusgehalt >8% und Schwermetall: {i.name}")
                     if "Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
                         BBSchG_Anmerkungen.remove("Überschreitung für Schwermetalle unbedenklich bei Böden mit naturbedingt und großflächig siedlungsbedingt erhöhten Hintergrundgehalten, soweit eine Freisetzung der Schadstoffe oder zusätzliche Einträge nach § 9 Abs. 2 und 3 dieser Verordnung keine nachteiligen Auswirkungen auf die Bodenfunktionen erwarten lassen.")
-                    if "Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Lehm/Schluff.")
-                    if "Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 gelten für Cadmium, Nickel und Zink die Vorsorgewerte der Bodenart Sand.")
-                    if "Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 gelten für Blei die Vorsorgewerte der Bodenart Lehm/Schluff (Sand)." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 gelten für Blei die Vorsorgewerte der Bodenart Lehm/Schluff (Sand).")
+                    if "Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Lehm/Schluff bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Lehm/Schluff bewertet.")
+                    if "Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Sand bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Lehm/Schluff mit einem pH-Wert von < 6,0 wurde für Cadmium, Nickel und Zink anhand der Vorsorgewerte der Bodenart Sand bewertet.")
+                    if "Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 wurde für Blei anhand der Vorsorgewerte der Bodenart Lehm/Schluff (Sand) bewertet." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        BBSchG_Anmerkungen.remove("Bei Böden der Bodenart Ton (Lehm/Schluff) mit einem pH-Wert von < 5,0 wurde für Blei anhand der Vorsorgewerte der Bodenart Lehm/Schluff (Sand) bewertet.")
                     # BBSchG -> Falls Humus >8% Info, dass Schwermetalle nicht beruecksichtigt werden
                     if "Die Vorsorgewerte für Schwermetalle finden für Böden und Bodenhorizonte mit einem Humusgehalt von mehr als 8 Prozent keine Anwendung. Für diese Böden können die zuständigen Behörden ggf. gebietsbezogene Festsetzungen treffen." in BBSchG_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
                         BBSchG_Anmerkungen.remove("Die Vorsorgewerte für Schwermetalle finden für Böden und Bodenhorizonte mit einem Humusgehalt von mehr als 8 Prozent keine Anwendung. Für diese Böden können die zuständigen Behörden ggf. gebietsbezogene Festsetzungen treffen.")
@@ -2310,7 +2325,9 @@ class GUI:
                 else:
                     pass
 
-            # Data Output
+            # Create Z0*_EL List
+            Z0_Stern_EL = Z11_EL + Z12_EL + Z2_EL + Higher_Z2_EL
+            # Data Outpu
             strZ0_TS = ', '.join(Z0_TS)  # Liste in string konvertieren
             strZ0_Stern_TS = ', '.join(Z0_Stern_TS)
             strZ1_TS = ', '.join(Z1_TS)
@@ -2322,6 +2339,7 @@ class GUI:
             strZ12_EL = ', '.join(Z12_EL)
             strZ2_EL = ', '.join(Z2_EL)
             strHigher_Z2_EL = ', '.join(Higher_Z2_EL)
+            strZ0_Stern_EL = ', '.join(Z0_Stern_EL)
             strLAGA_EL_Anmerkungen = ', '.join(LAGA_EL_Anmerkungen)
             strBBSchG_Eingehalten = ', '.join(BBSchG_Eingehalten)
             strBBSchG_Ueberschritten = ', '.join(BBSchG_Ueberschritten)
@@ -2397,6 +2415,8 @@ class GUI:
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Z1.2: ' + strZ12_EL)
             pdf.cell(w=30, h=8, border=1, align="L")
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Z1.1: ' + strZ11_EL)
+            pdf.cell(w=30, h=8, border=1, align="L")
+            pdf.multi_cell(w=0, h=8, border=1, align="L", txt='>Z0*: ' + strZ0_Stern_EL)
             pdf.cell(w=30, h=8, border=1, align="L", txt='Anmerkungen:')
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt=strLAGA_EL_Anmerkungen)
             pdf.cell(w=0, h=8, border=0, align="L", ln=1)
