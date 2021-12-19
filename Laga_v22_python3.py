@@ -44,7 +44,7 @@
 # FERTIG Wird Chlorid richtig eingestuft? Gleich Grenzwerte bei DK2 und DK3
 # Pheolindex ist bei DepV "Phenole" in mg/L, das muss so entsprechend auch in das PDF geschrieben werden und nicht "Phenolindex"
 # Antimon C0-Wert noch hinzufügen
-# Ph Werte einstufung prüfen (ähnlich wie bei LAGA). ggf- copy paste von da
+# FERTIG Ph Werte einstufung prüfen (ähnlich wie bei LAGA). ggf- copy paste von da
 # Fußnoten noch einpflegen
 # Extr. lip. Stoffe in Masse%-TM?? anstatt nur Masse%?
 
@@ -106,6 +106,7 @@ REK_TS_Vorsorgewerte_ueberschritten = []
 REK_EL_Vorsorgewerte_ueberschritten = []
 GEO_TS_Vorsorgewerte_ueberschritten = []
 GEO_EL_Vorsorgewerte_ueberschritten = []
+DepV_Anmerkungen = []
 # Bodenart/Datum
 Bodenart = []
 datelist = []
@@ -988,8 +989,8 @@ class GUI:
         entry4.delete(0, 'end')
         entry5.delete(0, 'end')
         entry6.delete(0, 'end')
-        entry7.delete(0, 'end')
         entry8.delete(0, 'end')
+        entry7.delete(0, 'end')
         entry9.delete(0, 'end')
         entry10.delete(0, 'end')
         entry11.delete(0, 'end')
@@ -1115,6 +1116,7 @@ class GUI:
         del REK_EL_Vorsorgewerte_ueberschritten[:]
         del GEO_TS_Vorsorgewerte_ueberschritten[:]
         del GEO_EL_Vorsorgewerte_ueberschritten[:]
+        del DepV_Anmerkungen[:]
         #del Bodenart[:]
 
     def Bodenart(self):
@@ -1819,10 +1821,10 @@ class GUI:
                                                   PCB6]  # Extra Liste fuer Pruefung BBSchG abhaengig vom Humusgehalt
 
         Liste_Stoffe_DepV = [KW_C10_C40, BTX_BTEX, PAK_16, PCB7, TOC, Gluehverlust,
-                             Lipohile_Stoffe, pH_Wert, Leitfaehigkeit, Cyanid_lf, Phenolindex, Arsen,
+                             Lipohile_Stoffe, Leitfaehigkeit, Cyanid_lf, Phenolindex, Arsen,
                              Blei, Cadmium, Chrom_gesamt, Kupfer, Nickel, Quecksilber, Zink, Chlorid, Sulfat,
                              DOC, Fluorid, Barium, Molybdaen, Antimon, Selen,
-                             Gesamtgehalt_geloeste_Feststoffe]  # Liste benutzt fuer DepV-Pruefung
+                             Gesamtgehalt_geloeste_Feststoffe]  # Liste benutzt fuer DepV-Pruefung (ohne pH-Wert)
 
         # Feststoff
         Arsen.wert_TS = entry1.get()
@@ -2084,13 +2086,13 @@ class GUI:
                 if i.wert_EL <= i.Limit_Z0_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
                     Z0_EL.extend({i.name})
                 elif i.Limit_Z0_EL < i.wert_EL <= i.Limit_Z11_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
-                        Z11_EL.extend({i.name})
+                    Z11_EL.extend({i.name})
                 elif i.Limit_Z11_EL < i.wert_EL <= i.Limit_Z12_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
-                        Z12_EL.extend({i.name})
+                    Z12_EL.extend({i.name})
                 elif i.Limit_Z12_EL < i.wert_EL <= i.Limit_Z2_EL and i.name != "Quecksilber" and i.name != "pH-Wert":
-                        Z2_EL.extend({i.name})
+                    Z2_EL.extend({i.name})
                 elif i.wert_EL > i.Limit_Z2_EL and i.name != "Quecksilber" and i.name != "pH-Wert" and i.wert_EL != 10000000:
-                        Higher_Z2_EL.extend({i.name})
+                    Higher_Z2_EL.extend({i.name})
                 # Ausnahme für Quecksilber
                 if i.wert_EL < i.Limit_Z0_EL and i.name == "Quecksilber":
                     Z0_EL.extend({i.name})
@@ -2336,6 +2338,197 @@ class GUI:
                 elif i.wert_EL > i.Limit_REK_EL and i.wert_EL != 10000000 and i.Limit_REK_EL != 0:
                     REK_EL_Ueberschritten.extend({i.name})
 
+                # Fußnote 2a
+                if i.name == "TOC":
+                    if "2a (TOC)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("2a (TOC)")
+                if i.name == "TOC" and 3 >= i.wert_TS > 1:
+                    DepV_Anmerkungen.extend(["2a (TOC)"])
+
+                if i.name == "Gluehverlust":
+                    if "2a (Glühverlust)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("2a (Glühverlust)")
+                if i.name == "Gluehverlust" and 5 >= i.wert_TS > 3:
+                    DepV_Anmerkungen.extend(["2a (Glühverlust)"])
+
+                # Fußnote 3 TOC und Glüverlust
+                if i.name == "TOC":
+                    if "3 (TOC)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("3 (TOC)")
+                if i.name == "TOC" and 6 >= i.wert_TS > 1:
+                    DepV_Anmerkungen.extend(["3 (TOC)"])
+
+                if i.name == "Gluehverlust":
+                    if "3 (Glühverlust)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("3 (Glühverlust)")
+                if i.name == "Gluehverlust" and 10 >= i.wert_TS > 3:
+                    DepV_Anmerkungen.extend(["3 (Glühverlust)"])
+
+                # Fußnoten 3 und 10 DOC
+                if i.name == "DOC":
+                    if "3 und 10 (DOC)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("3 und 10 (DOC)")
+                if i.name == "DOC" and 100 >= i.wert_EL > 50:
+                    DepV_Anmerkungen.extend(["3 und 10 (DOC)"])
+
+                # Fußnote 11 DOC
+                if i.name == "DOC":
+                    if "11 (DOC)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("11 (DOC)")
+                if i.name == "DOC" and 100 >= i.wert_EL > 80:
+                    DepV_Anmerkungen.extend(["11 (DOC)"])
+
+                # Fußnoten 4 und 5 TOC und Glühverlust
+                if i.name == "TOC":
+                    if "4 und 5 (TOC)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("4 und 5 (TOC)")
+                if i.name == "TOC" and 1 < i.wert_TS and i.wert_TS != 10000000:
+                    DepV_Anmerkungen.extend(["4 und 5 (TOC)"])
+
+                if i.name == "Gluehverlust":
+                    if "4 und 5 (Glühverlust)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("4 und 5 (Glühverlust)")
+                if i.name == "Gluehverlust" and 3 < i.wert_TS and i.wert_TS != 10000000:
+                    DepV_Anmerkungen.extend(["4 und 5 (Glühverlust)"])
+
+                # Fußnote 5 Extrahierbare Lipohile Stoffe
+                if i.name == "Extrahierbare Lipohile Stoffe":
+                    if "5 (Extr. Lipophile Stoffe)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("5 (Extr. Lipophile Stoffe)")
+                if i.name == "Extrahierbare Lipohile Stoffe" and 0.4 < i.wert_TS and i.wert_TS != 10000000:
+                    DepV_Anmerkungen.extend(["5 (Extr. Lipophile Stoffe)"])
+
+                # Fußnote 6 Summe PAK (EPA)
+                if i.name == "PAK16 (EPA)":
+                    if "6 (Summe PAK EPA)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("6 (Summe PAK EPA)")
+                if i.name == "PAK16 (EPA)" and 5 < i.wert_TS and i.wert_TS != 10000000:
+                    DepV_Anmerkungen.extend(["6 (Summe PAK EPA)"])
+
+                # Fußnote 13 Chlorid
+                if i.name == "Chlorid":
+                    if "13 (Chlorid)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Chlorid)")
+                if i.name == "Chlorid" and 2500 >= i.wert_EL > 1500:
+                    DepV_Anmerkungen.extend(["13 (Chlorid)"])
+
+                # Fußnote 14 Chlorid REK
+                if i.name == "Chlorid":
+                    if "14 (Chlorid)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("14 (Chlorid)")
+                if i.name == "Chlorid" and i.wert_EL > 10 and i.wert_EL != 10000000:
+                    DepV_Anmerkungen.extend(["14 (Chlorid)"])
+
+                # Fußnote 13 Sulfat
+                if i.name == "Sulfat":
+                    if "13 (Sulfat)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Sulfat)")
+                if i.name == "Sulfat" and 5000 >= i.wert_EL > 2000:
+                    DepV_Anmerkungen.extend(["13 (Sulfat)"])
+
+                # Fußnote 14 Sulfat REK
+                if i.name == "Sulfat":
+                    if "14 (Sulfat)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("14 (Sulfat)")
+                if i.name == "Sulfat" and i.wert_EL > 50 and i.wert_EL != 10000000:
+                    DepV_Anmerkungen.extend(["14 (Sulfat)"])
+
+                # Fußnote 15 Sulfat
+                if i.name == "Sulfat":
+                    if "15 (Sulfat)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("15 (Sulfat)")
+                if i.name == "Sulfat" and 2000 >= i.wert_EL > 100:
+                    DepV_Anmerkungen.extend(["15 (Sulfat)"])
+
+                # Fußnote 13 Barium
+                if i.name == "Barium":
+                    if "13 (Barium)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Barium)")
+                if i.name == "Barium" and 30 >= i.wert_EL > 5:
+                    DepV_Anmerkungen.extend(["13 (Barium)"])
+
+                # Fußnote 13 Molybdaen
+                if i.name == "Molybdaen":
+                    if "13 (Molybdän)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Molybdän)")
+                if i.name == "Molybdaen" and 3000 >= i.wert_EL > 300:
+                    DepV_Anmerkungen.extend(["13 (Molybdän)"])
+
+                # Fußnote 13 Antimon
+                if i.name == "Antimon":
+                    if "13 (Antimon)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Antimon)")
+                if i.name == "Antimon" and 500 >= i.wert_EL > 30:
+                    DepV_Anmerkungen.extend(["13 (Antimon)"])
+
+                # Fußnote 16 Antimon
+                if i.name == "Antimon":
+                    if "16 (Antimon)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("16 (Antimon)")
+                if i.name == "Antimon" and i.wert_EL > 6 and i.wert_EL != 10000000:
+                    DepV_Anmerkungen.extend(["16 (Antimon)"])
+
+                # Fußnote 13 Selen
+                if i.name == "Selen":
+                    if "13 (Selen)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                        DepV_Anmerkungen.remove("13 (Selen)")
+                if i.name == "Selen" and 700 >= i.wert_EL > 30:
+                    DepV_Anmerkungen.extend(["13 (Selen)"])
+
+
+
+            # Fußnote 8 pH-Wert
+            if "8 (pH-Wert)" in DepV_Anmerkungen:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                DepV_Anmerkungen.remove("8 (pH-Wert)")
+            if 6.5 > pH_Wert.wert_EL:
+                DepV_Anmerkungen.extend(["8 (pH-Wert)"])
+            if 9 < pH_Wert.wert_EL and pH_Wert.wert_EL != 10000000:
+                DepV_Anmerkungen.extend(["8 (pH-Wert)"])
+
+
+            # DK Eluat pH Wert Einordnung
+            if pH_Wert.name in DK0_EL:
+                DK0_EL.remove(pH_Wert.name)
+            if pH_Wert.name in DK1_EL:
+                DK1_EL.remove(pH_Wert.name)
+            if pH_Wert.name in DK2_EL:
+                DK2_EL.remove(pH_Wert.name)
+            if pH_Wert.name in DK3_EL:
+                DK3_EL.remove(pH_Wert.name)
+            if pH_Wert.name in Higher_DK3_EL:
+                Higher_DK3_EL.remove(pH_Wert.name)
+            if pH_Wert.name in GEO_EL_Eingehalten:
+                GEO_EL_Eingehalten.remove(pH_Wert.name)
+            if pH_Wert.name in GEO_EL_Ueberschritten:
+                GEO_EL_Ueberschritten.remove(pH_Wert.name)
+            if pH_Wert.name in REK_EL_Eingehalten:
+                REK_EL_Eingehalten.remove(pH_Wert.name)
+            if pH_Wert.name in REK_EL_Ueberschritten:
+                REK_EL_Ueberschritten.remove(pH_Wert.name)
+
+            if 5.5 <= pH_Wert.wert_EL <= 13 and i.wert_EL != 10000000:
+                DK0_EL.extend({pH_Wert.name})
+            # Für DK1 und DK2 gibt es keine Einstufung (gleich wie DK3)
+            elif (4 <= pH_Wert.wert_EL < 5.5) and i.wert_EL != 10000000:
+                DK3_EL.extend({pH_Wert.name})
+            elif pH_Wert.wert_EL < 4 or pH_Wert.wert_EL > 13 and i.wert_EL != 10000000:
+                Higher_DK3_EL.extend({pH_Wert.name})
+
+            # pH Wert GEO
+            print("ph-wert:", pH_Wert.wert_EL)
+            if 6.5 <= pH_Wert.wert_EL <= 9:
+                GEO_EL_Eingehalten.extend({pH_Wert.name})
+            elif pH_Wert.wert_EL < 6.5:
+                GEO_EL_Ueberschritten.extend({pH_Wert.name})
+            elif pH_Wert.wert_EL > 9 and pH_Wert.wert_EL != 10000000:
+                GEO_EL_Ueberschritten.extend({pH_Wert.name})
+
+            # pH Wert REK
+            if 6.5 <= pH_Wert.wert_EL <= 9:
+                REK_EL_Eingehalten.extend({pH_Wert.name})
+            elif pH_Wert.wert_EL < 6.5 or pH_Wert.wert_EL > 9 and pH_Wert.wert_EL != 10000000:
+                REK_EL_Ueberschritten.extend({pH_Wert.name})
+
             # Create Z0*_EL List
             Z0_Stern_EL = Z11_EL + Z12_EL + Z2_EL + Higher_Z2_EL
             # Data Outpu
@@ -2369,6 +2562,7 @@ class GUI:
             strREK_EL_Ueberschritten = ', '.join(REK_EL_Ueberschritten)
             strGEO_EL_Ueberschritten = ', '.join(GEO_EL_Ueberschritten)
             strBBSchG_Anmerkungen = ', '.join(BBSchG_Anmerkungen)
+            strDepV_Anmerkungen = ', '.join(DepV_Anmerkungen)
 
             # BBSchG -> Falls in Liste mehr als 0 items, dann Notiz: Vorsorgewerte ueberschritten
             del BBSchG_Vorsorgewerte_ueberschritten[:]  # Deletes contenct of the list
@@ -2467,6 +2661,7 @@ class GUI:
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Feststoff: ' + strGEO_TS_Ueberschritten)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Eluat: ' + strGEO_EL_Ueberschritten)
+            pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Folgende Fußnoten der Tabelle 2 beachten: ' + strDepV_Anmerkungen)
             pdf.cell(w=0, h=8, border=0, align="L", ln=1)
 
             pdf.set_font('Arial', 'B', size=14)
