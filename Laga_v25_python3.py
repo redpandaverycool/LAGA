@@ -2850,14 +2850,31 @@ class GUI:
 # Splash Screen
 splash_root = Tk()
 splash_root.title("Splash Screen")
-splash_root.geometry("1300x850+0+0")
+#splash_root.geometry("500x500+0+0")
 
-splash_label = Label(splash_root, text = "Splash Screen!")
-splash_label.pack(pady = 20)
+w = 250 # width for the Tk root
+h = 250 # height for the Tk root
+# get screen width and height
+ws = splash_root.winfo_screenwidth() # width of the screen
+hs = splash_root.winfo_screenheight() # height of the screen
+# calculate x and y coordinates for the Tk root window
+x = (ws/2) - (w/2)
+y = (hs/2) - (h/2)
+# set the dimensions of the screen
+# and where it is placed
+splash_root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+
+#splash_label = Label(splash_root, text = "Boden- und abfallrechtliche Bewertung")
+#splash_label.pack(pady = 20)
 splash_root.iconbitmap("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/icon2.ico")
-splash_root.wm_attributes("-topmost", "true")
+#splash_root.wm_attributes('-fullscreen', 'True')
+splash_root.overrideredirect(1)
 
-img = Image.open("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/bulldozer-g2e9d69050_1920.jpg")
+#splash_root.configure(bg='blue')
+#splash_label.configure(bg='blue')
+
+img = Image.open("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/Logo.png")
 img = img.resize((250, 250), Image.ANTIALIAS)
 img = ImageTk.PhotoImage(img)
 panel = Label(splash_root, image=img)
@@ -2866,6 +2883,8 @@ panel.pack()
 
 # Run GUI-Programm
 def main_window():
+
+    splash_root.destroy()
 
     global root
     root = Tk()
@@ -2877,9 +2896,20 @@ def main_window():
     root.iconbitmap("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/icon2.ico")
 
     # Frame geometry
-    root.geometry(
-        "1300x850+0+0")  # The first two parameters are the width and height of the window. The last two parameters are x and y screen coordinates. You can specify the required x and y coordinates
-    root.resizable(0, 0)  # Don't allow resizing in the x or y direction
+    #root.geometry("1300x850+0+0")  # The first two parameters are the width and height of the window. The last two parameters are x and y screen coordinates. You can specify the required x and y coordinates
+    #root.resizable(0, 0)  # Don't allow resizing in the x or y direction
+
+    w = 1280 # width for the Tk root
+    h = 820 # height for the Tk root
+    # get screen width and height
+    ws = root.winfo_screenwidth() # width of the screen
+    hs = root.winfo_screenheight() # height of the screen
+    # calculate x and y coordinates for the Tk root window
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    # set the dimensions of the screen
+    # and where it is placed
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
     # Frame icon
     # root.iconbitmap
@@ -3513,6 +3543,6 @@ def main_window():
     root.mainloop()
 
 # Splash Screen timer
-splash_root.after(10, main_window)
+splash_root.after(3000, main_window)
 
 mainloop()
