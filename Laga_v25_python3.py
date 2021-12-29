@@ -1,3 +1,4 @@
+
 # ph wert problem "zwischen" noch loesen
 # Saeureneutralisationskapazitaet bisher nicht mit drin in DepV, muss? nachlesen
 # Weitere Anmerkungen BBSch, LAGA und DepV hinzufuegen
@@ -49,18 +50,18 @@
 # Extr. lip. Stoffe in Masse%-TM?? anstatt nur Masse%?
 
 # Noch to do
-##### Gefährlicher Abfall
-# ph wert extra
+##### FERTIG Gefährlicher Abfall
+# FERTIG ph wert extra
 
 
 #### sonstiges
-# PDF Ausgabe anpassen
+# FERTIG PDF Ausgabe anpassen
 # Werte auch pdf ausdrucken
 # Auswertungsgrundlagen im Programm darstellen (Tabellen und Grundlage welche Gesetze)
 # Hinweise zur Dateneingabe hinzufügen (Zeile 228)
 #beim excel importieren bei pak nimmter kommas mit
 # Saeureneutralisationskapazitaet bei DepV -> nur wenn Gef. Abfall vorliegt
-# Bei Laden des Programmes Ladescreen anzeigen
+# FERTIG Bei Laden des Programmes Ladescreen anzeigen
 # Taskleistensymbol anpassen
 
 from tkinter import *
@@ -72,6 +73,7 @@ import datetime
 import fpdf
 import pandas as pd
 from PIL import ImageTk, Image
+from io import open
 import time
 from docx import Document
 from docx.shared import Cm, Pt
@@ -1172,35 +1174,45 @@ class GUI:
 
     def Bodenart(self):
         global Bodenart_auswahl  # Die globale Variable kann ausserhalb der Funktion genutzt werden
+        global Bodenart_auswahl2
         Bodenart_auswahl = var1.get()
         if Bodenart_auswahl == 1:
             Bodenart_auswahl = "Bodenart: Ton"
+            Bodenart_auswahl2 = "Ton"
             print(Bodenart_auswahl)
         elif Bodenart_auswahl == 2:
             Bodenart_auswahl = "Bodenart: Schluff"
+            Bodenart_auswahl2 = "Schluff/Lehm"
             print(Bodenart_auswahl)
         elif Bodenart_auswahl == 3:
             Bodenart_auswahl = "Bodenart: Sand"
+            Bodenart_auswahl2 = "Sand"
             print(Bodenart_auswahl)
 
     def Bodenart_ergaenzung(self):
         global Bodenart_auswahl_ergaenzung
+        global Bodenart_auswahl_ergaenzung2
         Bodenart_auswahl_ergaenzung = var4.get()
         if Bodenart_auswahl_ergaenzung == 1:
             Bodenart_auswahl_ergaenzung = "Nicht stark schluffhaltiger Sand (<40%)"
+            Bodenart_auswahl_ergaenzung2 = "Nicht stark schluffhaltiger Sand (Kleiner 40%)"
             print(Bodenart_auswahl_ergaenzung)
         elif Bodenart_auswahl_ergaenzung == 2:
             Bodenart_auswahl_ergaenzung = "Stark schluffhaltiger Sand (40 bis <50%)"
+            Bodenart_auswahl_ergaenzung2 = "Stark schluffhaltiger Sand (40 bis kleiner 50%)"
             print(Bodenart_auswahl_ergaenzung)
 
     def Humus(self):
         global Humus
+        global Humus2
         Humus = var2.get()
         if Humus == 1:
             Humus = "Anteil Humus (TOC): >8% (>4%)"
+            Humus2 = ">8% (>4%)"
             print(Humus)
         elif Humus == 2:
             Humus = "Anteil Humus (TOC): <=8% (<=4%)"
+            Humus2 = "<=8% (<=4%)"
             print(Humus)
 
     def loadexcel(self):
@@ -1398,6 +1410,9 @@ class GUI:
                     Zip_Einheiten_EL = zip(Liste_Stoffnamen_EL, Liste_Einheiten_EL)
                     Dictionary_Gehalte_TS = dict(Zip_Gehalte_TS)
                     Dictionary_Gehalte_EL = dict(Zip_Gehalte_EL)
+
+                    global Dictionary_Einheiten_TS
+                    global Dictionary_Einheiten_EL
                     Dictionary_Einheiten_TS = dict(Zip_Einheiten_TS)
                     Dictionary_Einheiten_EL = dict(Zip_Einheiten_EL)
                     #print("Dictionary_Einheiten_EL:",Dictionary_Einheiten_EL)
@@ -1950,18 +1965,12 @@ class GUI:
         # Ueberpruefen, ob eine Zahl eingegeben wurde. Bei keiner Angabe x Wert annehmen.
         for i in Liste_Stoffe:
             if i.wert_TS == "":
-                i.wert_TS = 10000000
-            else:
-                pass
+                    i.wert_TS = 10000000
             if i.wert_EL == "":
                 i.wert_EL = 10000000
-            else:
-                pass
 
         if pH_Wert.wert_EL == "":
             pH_Wert.wert_EL = 10000000
-        else:
-            pass
 
         try:
             for i in Liste_Stoffe:
@@ -2017,23 +2026,23 @@ class GUI:
                 if i.name in list_Einheit_mgkgTM:
                     if dict_Auswahl_Einheiten[str(i.name)] == "mg/kg TM":
                         pass
-                    elif dict_Auswahl_Einheiten[str(i.name)] == "μg/kg TM":
+                    elif dict_Auswahl_Einheiten[str(i.name)] == "μg/kg TM" and i.wert_TS != 10000000:
                         i.wert_TS = i.wert_TS / 1000
                 if i.name in list_Einheit_ngkgTM:
                     if dict_Auswahl_Einheiten[str(i.name)] == "ng/kg TM":
                         pass
-                    elif dict_Auswahl_Einheiten[str(i.name)] == "μg/kg TM":
+                    elif dict_Auswahl_Einheiten[str(i.name)] == "μg/kg TM" and i.wert_TS != 10000000:
                         i.wert_TS = i.wert_TS * 1000
-                    elif dict_Auswahl_Einheiten[str(i.name)] == "mg/kg TM":
+                    elif dict_Auswahl_Einheiten[str(i.name)] == "mg/kg TM" and i.wert_TS != 10000000:
                         i.wert_TS = i.wert_TS * 1000000
 
                 if i.name in list_Einheit_μgL:
-                    if dict_Auswahl_Einheiten_Eluat[str(i.name)] == "mg/L":
-                        print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der nicht umgerechnete Wert: {i.wert_EL}")
+                    if dict_Auswahl_Einheiten_Eluat[str(i.name)] == "mg/L" and i.wert_EL != 10000000:
+                        #print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der nicht umgerechnete Wert: {i.wert_EL}")
                         i.wert_EL = i.wert_EL * 1000
-                        print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der umgerechnete Wert: {i.wert_EL}")
+                        #print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der umgerechnete Wert: {i.wert_EL}")
                 elif i.name in list_Einheit_mgL:
-                    if dict_Auswahl_Einheiten_Eluat[str(i.name)] != "mg/L":
+                    if dict_Auswahl_Einheiten_Eluat[str(i.name)] != "mg/L" and i.wert_EL != 10000000:
                         print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der nicht umgerechnete Wert: {i.wert_EL}")
                         i.wert_EL = i.wert_EL / 1000
                         print(f"Für {i.name} ist die Einheit {dict_Auswahl_Einheiten_Eluat[str(i.name)]} und der umgerechnete Wert: {i.wert_EL}")
@@ -2080,8 +2089,10 @@ class GUI:
                         Z1_TS.extend({i.name})
                     elif i.Limit_Z1_TS < i.wert_TS <= i.Limit_Z2_TS:
                         Z2_TS.extend({i.name})
+
                     elif i.wert_TS > i.Limit_Z2_TS and i.wert_TS != 10000000:
                         Higher_Z2_TS.extend({i.name})
+                        print("Wert ist:", i.wert_TS, i.name)
                     # Für Einbauklasse Z0*
                     if i.wert_TS > i.Limit_Z0_Stern_TS and i.wert_TS != 10000000: # max. Feststoffgehalte für Abgrabungen (Z0*)
                         Z0_Stern_TS.extend({i.name})
@@ -2188,9 +2199,9 @@ class GUI:
 
             # LAGA pH Wert Einordnung
             if pH_Wert.name in Z2_EL:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                Z2_EL.remove(i.name)
+                Z2_EL.remove(pH_Wert.name)
             if pH_Wert.name in Z12_EL:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
-                Z12_EL.remove(i.name)
+                Z12_EL.remove(pH_Wert.name)
 
             if 6.5 <= pH_Wert.wert_EL <= 9.5:
                 Z0_EL.extend({pH_Wert.name})
@@ -2634,13 +2645,18 @@ class GUI:
                     GefAbf_HH_SH_Ueberschritten_Stoffe_Eluat.extend({i.name})
 
             # ph-Wert (Gef. Abfall)
-            if pH_Wert.wert_EL > 13 or pH_Wert.wert_EL < 5.5 and pH_Wert.wert_EL != 10000000:
-                GefAbf_NDS_Ueberschritten_Stoffe_Eluat.extend({pH_Wert.name})
-                GefAbf_HH_SH_Ueberschritten_Stoffe_Eluat.extend({pH_Wert.name})
+            if pH_Wert.name in GefAbf_NDS_Ueberschritten:  # First remove the results of the previous looping (um zu verhindern, dass der Parameter mehrmal geschrieben wird)
+                GefAbf_NDS_Ueberschritten.remove(pH_Wert.name)
+
+            if pH_Wert.wert_EL != 10000000:
+                if pH_Wert.wert_EL > 13 or pH_Wert.wert_EL < 5.5:
+                    GefAbf_NDS_Ueberschritten_Stoffe_Eluat.extend({pH_Wert.name})
+                    GefAbf_HH_SH_Ueberschritten_Stoffe_Eluat.extend({pH_Wert.name})
+                    print("pH-Wert ist: ", pH_Wert.wert_EL)
 
             # Create Z0*_EL List
             Z0_Stern_EL = Z11_EL + Z12_EL + Z2_EL + Higher_Z2_EL
-            # Data Outpu
+            # Data Output
             strZ0_TS = ', '.join(Z0_TS)  # Liste in string konvertieren
             strZ0_Stern_TS = ', '.join(Z0_Stern_TS)
             strZ1_TS = ', '.join(Z1_TS)
@@ -2735,6 +2751,8 @@ class GUI:
             pdf = fpdf.FPDF(format='letter')
             pdf.add_page()
 
+            pdf.add_font('DejaVu', '', "C:/Programming/Deklarationsanalyse/DejaVuSans.ttf", uni=True)
+
             pdf.set_font('Arial', size=14)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Probenbezeichnung:  ' + str(entry0.get()), ln=1)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Probenahmedatum:  ' + str(entry00.get()), ln=1)
@@ -2778,7 +2796,7 @@ class GUI:
 
             pdf.set_font('Arial', 'B', size=14)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Deponieklasse nach Deponieverordnung', ln=1, fill=True)
-            pdf.set_font('Arial',  'B', size=11)
+            pdf.set_font('Arial', 'B', size=11)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Feststoff', ln=1)
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='>DK3: ' + strHigher_DK3_TS)
@@ -2786,7 +2804,7 @@ class GUI:
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='DK2: ' + strDK2_TS)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='DK1: ' + strDK1_TS)
 
-            pdf.set_font('Arial',  'B', size=11)
+            pdf.set_font('Arial', 'B', size=11)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Eluat', ln=1)
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='>DK3: ' + strHigher_DK3_EL)
@@ -2794,35 +2812,117 @@ class GUI:
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='DK2: ' + strDK2_EL)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='DK1: ' + strDK1_EL)
 
-            pdf.set_font('Arial',  'B', size=11)
+            pdf.set_font('Arial', 'B', size=11)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Rekultivierungsschicht', ln=1)
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Grenzwerte eingehalten: ' + strREK_Eingehalten)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Feststoff: ' + strREK_TS_Ueberschritten)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Eluat: ' + strREK_EL_Ueberschritten)
 
-            pdf.set_font('Arial',  'B', size=11)
+            pdf.set_font('Arial', 'B', size=11)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Geologische Barriere', ln=1)
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Grenzwerte eingehalten: ' + strGEO_Eingehalten)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Feststoff: ' + strGEO_TS_Ueberschritten)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Eluat: ' + strGEO_EL_Ueberschritten)
 
-            pdf.set_font('Arial',  'B', size=11)
+            pdf.set_font('Arial', 'B', size=11)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Fußnoten der Tabelle 2 (DepV)', ln=1)
             pdf.set_font('Arial', size=11)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Folgende Fußnoten müssen beachtet werden: ' + strDepV_Anmerkungen)
             pdf.cell(w=0, h=8, border=0, align="L", ln=1)
 
+            pdf.add_page()
+
             pdf.set_font('Arial', 'B', size=14)
             pdf.cell(w=0, h=8, border=1, align="L", txt='Gefährlicher Abfall gemäß Länderregeln', ln=1, fill=True)
-            pdf.set_font('Arial', size=11)
-            pdf.cell(w=0, h=8, border=1, align="L", txt='Grenzwerte für Schleswig-Holstein und Hamburg eingehalten: ' + strGefAbf_HH_SH_Eingehalten, ln=1)
+            pdf.set_font('Arial', 'B' , size=11)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Schleswig-Holstein und Hamburg', ln=1)
+            pdf.set_font('Arial' , size=11)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Grenzwerte eingehalten: ' + strGefAbf_HH_SH_Eingehalten, ln=1)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Feststoff: ' + strGefAbf_HH_SH_Ueberschritten_Stoffe_Feststoff)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Eluat: ' + strGefAbf_HH_SH_Ueberschritten_Stoffe_Eluat)
-            pdf.cell(w=0, h=8, border=1, align="L", txt='Grenzwerte für Niedersachsen eingehalten: ' + strGefAbf_NDS_Eingehalten, ln=1)
+            pdf.set_font('Arial', 'B' , size=11)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Niedersachsen', ln=1)
+            pdf.set_font('Arial' , size=11)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Grenzwerte eingehalten: ' + strGefAbf_NDS_Eingehalten, ln=1)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Feststoff: ' + strGefAbf_NDS_Ueberschritten_Stoffe_Feststoff)
             pdf.multi_cell(w=0, h=8, border=1, align="L", txt='Überschreitung für Eluat: ' + strGefAbf_NDS_Ueberschritten_Stoffe_Eluat)
+
+            pdf.add_page()
+
+            pdf.set_fill_color(180)
+
+            pdf.set_font('Arial', 'B', size=14)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Eingabewerte', ln=1, fill=True)
+            pdf.set_font('DejaVu', size=10)
+
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Hauptbodenart (HB): ' + Bodenart_auswahl2, ln=1)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Schluffgehalt wenn HB Sand: ' + Bodenart_auswahl_ergaenzung, ln=1)
+            pdf.cell(w=0, h=8, border=1, align="L", txt='Anteil Humus (TOC): ' + Humus2, ln=1)
+
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Parameter')
+            pdf.cell(w=30, h=8, border=1, align="L", txt='Werte Feststoff')
+            #pdf.set_font('Arial',  size=11)
+            pdf.cell(w=30, h=8, border=1, align="L", txt='Einheit')
+            #pdf.set_font('Arial', size=11)
+            pdf.cell(w=30, h=8, border=1, align="L", txt='Werte Eluat')
+            #pdf.set_font('DejaVu', size=11)
+            pdf.cell(w=30, h=8, border=1, align="L", txt='Einheit')
+            pdf.cell(w=30, h=8, border=1, align="L", txt="", fill=False, ln=1)
+
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Arsen: ', fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = entry1.get(), fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = dict_Auswahl_Einheiten["Arsen"], fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt= entry25.get(), fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = dict_Auswahl_Einheiten_Eluat["Arsen"])
+            pdf.cell(w=30, h=8, border=1, align="L", txt="", fill=False, ln=1)
+
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Blei: ', fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = entry2.get(), fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = dict_Auswahl_Einheiten["Blei"], fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt= entry26.get(), fill=False)
+            pdf.cell(w=30, h=8, border=1, align="L", txt = dict_Auswahl_Einheiten_Eluat["Blei"])
+            pdf.cell(w=30, h=8, border=1, align="L", txt="", fill=False, ln=1)
+
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Cadmium: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Chrom gesamt: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Kupfer: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Nickel: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Quecksilber: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Thallium: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Zink: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='EOX: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='KW C10-C40: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='KW C10-C22: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Cyanid gesamt: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='BTX (BTEX): ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='LHKW: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='PAK 16 (EPA): ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Benzo(a)pyren: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='PCB 6: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='PCB 7: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='TOC: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Glühverlust: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Säureneutralisationskap.: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Extr. lipophile Stoffe: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Dioxine / Furane: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Cyanid: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Cyanid leicht freisetzbar: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Phenolindex: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Chlorid: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Sulfat: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='pH-Wert: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Leitfähigkeit: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='DOC: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Fluorid: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Barium: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Molybdän: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Antimon: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Selen: ', fill=False, ln=1)
+            pdf.cell(w=46, h=8, border=1, align="L", txt='Gesamtg. an gel. Stoffen: ', fill=False, ln=1)
+
+
 
             safe_file = tkinter.filedialog.asksaveasfilename(initialdir="/", title="Speichern unter",
                                                              filetypes=(("PDF", "*.pdf"), ("all files", "*.*")))
@@ -2852,8 +2952,8 @@ splash_root = Tk()
 splash_root.title("Splash Screen")
 #splash_root.geometry("500x500+0+0")
 
-w = 250 # width for the Tk root
-h = 250 # height for the Tk root
+w = 500 # width for the Tk root
+h = 500 # height for the Tk root
 # get screen width and height
 ws = splash_root.winfo_screenwidth() # width of the screen
 hs = splash_root.winfo_screenheight() # height of the screen
@@ -2874,8 +2974,8 @@ splash_root.overrideredirect(1)
 #splash_root.configure(bg='blue')
 #splash_label.configure(bg='blue')
 
-img = Image.open("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/Logo.png")
-img = img.resize((250, 250), Image.ANTIALIAS)
+img = Image.open("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/BAB-Tool-Logo.png")
+img = img.resize((500, 500), Image.ANTIALIAS)
 img = ImageTk.PhotoImage(img)
 panel = Label(splash_root, image=img)
 panel.image = img
@@ -2890,7 +2990,7 @@ def main_window():
     root = Tk()
 
     # Frame title
-    root.title("  Boden- und abfallrechtliche Bewertung (Copyright: Johannes Krohn)")
+    root.title("  BAB-Tool (Boden- und abfallrechtliche Bewertung)      © Johannes Krohn")
 
     # Icon
     root.iconbitmap("C:/Users/Johannes/Documents/Programmieren/Python/Deklarationsanalyse/icon2.ico")
@@ -3543,6 +3643,6 @@ def main_window():
     root.mainloop()
 
 # Splash Screen timer
-splash_root.after(3000, main_window)
+splash_root.after(4000, main_window)
 
 mainloop()
