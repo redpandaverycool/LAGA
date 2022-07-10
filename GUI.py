@@ -8,14 +8,11 @@ class GUI_main():
         Label(master, text="").grid(row=0, sticky=E)
         Label(master, text="Probenbezeichnung:").grid(column= 0, row=2, sticky=N, padx=(100, 0))
         Label(master, text="Probenahmedatum:").grid(row=3, sticky=N, padx=(100, 0))
-
         Label(master, text="Hauptbodenart (HB):").grid(row=4, sticky=E)
         Label(master, text="Schluffgehalt wenn HB Sand:").grid(row=7, sticky=E)
         Label(master, text="Anteil Humus (TOC):").grid(row=9, sticky=E)
-
         Label(master, text="Werte Feststoff", width=17, fg='black').grid(row=1, column=4, padx=10)
         Label(master, text="Werte Eluat", width=17, fg='black').grid(row=1, column=7)
-
         Label(master, text="Arsen").grid(row=2,column=3, sticky=E)
         Label(master, text="Blei").grid(row=3, column=3, sticky=E)
         Label(master, text="Cadmium").grid(row=4,column=3, sticky=E)
@@ -40,7 +37,6 @@ class GUI_main():
         Label(master, text="Säureneutralisationskapazität").grid(row=23,column=3, sticky=E)
         Label(master, text="Extr. lipohile Stoffe").grid(row=24,column=3, sticky=E)
         Label(master, text="Dioxine / Furane").grid(row=25,column=3, sticky=E)
-
         Label(master, text="Arsen").grid(row=2, column=6, sticky=E)
         Label(master, text="Blei").grid(row=3, column=6, sticky=E)
         Label(master, text="Cadmium").grid(row=4, column=6, sticky=E)
@@ -63,7 +59,6 @@ class GUI_main():
         Label(master, text="Antimon").grid(row=21, column=6, sticky=E)
         Label(master, text="Selen").grid(row=22, column=6, sticky=E)
         Label(master, text="   Gesamtgehalt an gel. Stoffen").grid(row=23, column=6, sticky=E)
-
         Label(master, text="    Hinweise zur Werteeingabe:",fg="grey38", padx=0, pady=0).grid(row=18, column=0)
         Label(master, text="       Nachkommastellen: Komma oder Punkt",fg="grey38", padx=0, pady=0).grid(row=19, column=0)
         Label(master, text="Unter Bestimmungsgrenze: z.B. <0,5",fg="grey38", padx=0, pady=0).grid(row=20, column=0)
@@ -99,7 +94,6 @@ class GUI_main():
         entry22 = Entry(master)  # Stoff22
         entry23 = Entry(master)  # Stoff23
         entry24 = Entry(master)  # Stoff24
-
         # Eluat 22x
         entry25 = Entry(master)  # Stoff25
         entry26 = Entry(master)  # Stoff26
@@ -126,7 +120,6 @@ class GUI_main():
 
         entry0.grid(row=2, column=1, sticky=N)
         entry00.grid(row=3, column=1, sticky=N)
-
         # Feststoff 24x
         entry1.grid(row=2, column=4)
         entry2.grid(row=3, column=4)
@@ -152,7 +145,6 @@ class GUI_main():
         entry22.grid(row=23, column=4)
         entry23.grid(row=24, column=4)
         entry24.grid(row=25, column=4)
-
         entry25.grid(row=2, column=7)
         entry26.grid(row=3, column=7)
         entry27.grid(row=4, column=7)
@@ -183,10 +175,10 @@ class GUI_main():
         Radiobutton(master, text="Ton", value=1).grid(row=6, column=1, sticky=W)
         Radiobutton(master, text="Schluff/Lehm", value=2).grid(row=5, column=1,sticky=W)
         Radiobutton(master, text="Sand", value=3).grid(row=4, column=1, sticky=W)
-        Radiobutton(master, text="Nicht stark schluffhaltig (<40%)", value=1).grid(row=7, column=1, sticky=W)
-        Radiobutton(master, text="Stark schluffhaltig (40 bis <50%)", value=2).grid(row=8, column=1, sticky=W)
-        Radiobutton(master, text=">8% (>4%)", value=1).grid(row=9, column=1, sticky=W)
-        Radiobutton(master, text="<=8% (<=4%)", value=2).grid(row=10, column=1,sticky=W)
+        Radiobutton(master, text="Nicht stark schluffhaltig (<40%)", value=4).grid(row=7, column=1, sticky=W)
+        Radiobutton(master, text="Stark schluffhaltig (40 bis <50%)", value=5).grid(row=8, column=1, sticky=W)
+        Radiobutton(master, text=">8% (>4%)", value=6).grid(row=9, column=1, sticky=W)
+        Radiobutton(master, text="<=8% (<=4%)", value=7).grid(row=10, column=1,sticky=W)
 
         option_Feststoff_Arsen = tkinter.StringVar(root)
         option_Feststoff_Blei = tkinter.StringVar(root)
@@ -352,7 +344,6 @@ class GUI_main():
         Options_Feststoff_Saeuren.grid(row=23, column=5)
         Options_Feststoff_LipophileStoffe.grid(row=24, column=5)
         Options_Feststoff_Dioxine.grid(row=25, column=5)
-
         Options_Eluat_Arsen.grid(row=2, column=8)
         Options_Eluat_Blei.grid(row=3, column=8)
         Options_Eluat_Cadmium.grid(row=4, column=8)
