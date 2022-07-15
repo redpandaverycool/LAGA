@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import *
+import Classification_module
 
 # Class main window
 class GUI_main():
@@ -168,17 +169,51 @@ class GUI_main():
         entry45.grid(row=22, column=7)
         entry46.grid(row=23, column=7)
 
+        ###### Button ######
         Button(master, text="Lade GBA Prüfbericht", fg="black", bg="white", padx=2, pady=2).grid(row=18, column=1)
         Button(master, text="Zurücksetzen", bg="white", padx=2, pady=2).grid(row=19, column=1)
-        Button(master, text="Bewertung", fg="black", bg="white", padx=2, pady=2).grid(row=20,column=1)
+        Button(master, text="Bewertung", fg="black", bg="white", padx=2,
+               pady=2).grid(row=20,
+                                                                  column=1)
         Button(master, text="Beenden", command=root.destroy, bg="white", padx=2, pady=2).grid(row=22, column=1)
-        Radiobutton(master, text="Ton", value=1).grid(row=6, column=1, sticky=W)
-        Radiobutton(master, text="Schluff/Lehm", value=2).grid(row=5, column=1,sticky=W)
-        Radiobutton(master, text="Sand", value=3).grid(row=4, column=1, sticky=W)
-        Radiobutton(master, text="Nicht stark schluffhaltig (<40%)", value=4).grid(row=7, column=1, sticky=W)
-        Radiobutton(master, text="Stark schluffhaltig (40 bis <50%)", value=5).grid(row=8, column=1, sticky=W)
-        Radiobutton(master, text=">8% (>4%)", value=6).grid(row=9, column=1, sticky=W)
-        Radiobutton(master, text="<=8% (<=4%)", value=7).grid(row=10, column=1,sticky=W)
+
+        ###### Radiobutton ######
+        # Bodenart
+        var1 = IntVar()
+        var1.set(0)
+        Radiobutton(master, text="Ton", value=1, variable=var1, command =
+        Classification_module.Classification_class.Bodenart_function_ton
+                    ).grid( row=6, column=1, sticky=W)
+        Radiobutton(master, text="Schluff/Lehm", value=2, variable=var1, command =
+        Classification_module.Classification_class.Bodenart_function_schluff
+                    ).grid(row=5, column=1,sticky=W)
+        Radiobutton(master, text="Sand", value=3, variable=var1, command =
+        Classification_module.Classification_class.Bodenart_function_sand).grid(
+            row=4, column=1, sticky=W)
+
+        # Humus
+        var2 = IntVar()
+        var2.set(0)
+        Radiobutton(master, text=">8% (>4%)", value=4, variable=var2, command
+        = Classification_module.Classification_class.Humus_function_high).grid(
+            row=9, column=1, sticky=W)
+        Radiobutton(master, text="<=8% (<=4%)", value=5, variable=var2,
+                    command =
+                    Classification_module.Classification_class.Humus_function_low).grid(row=10, column=1,sticky=W)
+
+        # Schluffgehalt
+        var4 = IntVar()
+        var4.set(0)
+        Radiobutton(master, text="Nicht stark schluffhaltig (<40%)",
+                    value=6, variable=var4,
+                    command =
+                    Classification_module.Classification_class
+                    .Bodenart_auswahl_ergaenzung_nichtstark).grid(row=7, column=1, sticky=W)
+        Radiobutton(master, text="Stark schluffhaltig (40 bis <50%)",
+                    value=7, variable=var4,
+                    command =
+                    Classification_module.Classification_class
+                    .Bodenart_auswahl_ergaenzung_stark).grid(row=8, column=1, sticky=W)
 
         option_Feststoff_Arsen = tkinter.StringVar(root)
         option_Feststoff_Blei = tkinter.StringVar(root)
